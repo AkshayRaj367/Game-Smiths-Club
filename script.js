@@ -1,5 +1,8 @@
 /* Game Smiths Club - Interactivity & Animations */
 (function(){
+  // Detect mobile/touch devices
+  const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  
   const root = document.documentElement;
   const modeBtn = document.getElementById('modeToggle');
   const musicBtn = document.getElementById('musicToggle');
@@ -128,31 +131,33 @@
   window.addEventListener('scroll', parallax, {passive:true});
   parallax();
 
-  // Cursor pixel trail
-  const canvas = document.getElementById('cursor-canvas');
-  if(canvas){
-    const ctx = canvas.getContext('2d');
-    let w=canvas.width=window.innerWidth, h=canvas.height=window.innerHeight;
-    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
-    const particles=[];
-    const colors=['#00ffff','#ff00ff','#00ff99'];
-    function addParticle(x,y){
-      particles.push({x,y,dx:(Math.random()-0.5)*1.5,dy:(Math.random()-0.5)*1.5,life:1,size:3,color:colors[(Math.random()*colors.length)|0]});
-    }
-    window.addEventListener('pointermove',e=>{for(let i=0;i<2;i++) addParticle(e.clientX,e.clientY);});
-    function step(){
-      ctx.clearRect(0,0,w,h);
-      for(let i=particles.length-1;i>=0;i--){
-        const p=particles[i];
-        p.x+=p.dx; p.y+=p.dy; p.life-=0.02;
-        ctx.globalAlpha=Math.max(p.life,0);
-        ctx.fillStyle=p.color;
-        ctx.fillRect(p.x,p.y,p.size,p.size);
-        if(p.life<=0) particles.splice(i,1);
+  // Cursor pixel trail (disabled on mobile)
+  if(!isMobile){
+    const canvas = document.getElementById('cursor-canvas');
+    if(canvas){
+      const ctx = canvas.getContext('2d');
+      let w=canvas.width=window.innerWidth, h=canvas.height=window.innerHeight;
+      window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+      const particles=[];
+      const colors=['#00ffff','#ff00ff','#00ff99'];
+      function addParticle(x,y){
+        particles.push({x,y,dx:(Math.random()-0.5)*1.5,dy:(Math.random()-0.5)*1.5,life:1,size:3,color:colors[(Math.random()*colors.length)|0]});
       }
-      requestAnimationFrame(step);
+      window.addEventListener('pointermove',e=>{for(let i=0;i<2;i++) addParticle(e.clientX,e.clientY);});
+      function step(){
+        ctx.clearRect(0,0,w,h);
+        for(let i=particles.length-1;i>=0;i--){
+          const p=particles[i];
+          p.x+=p.dx; p.y+=p.dy; p.life-=0.02;
+          ctx.globalAlpha=Math.max(p.life,0);
+          ctx.fillStyle=p.color;
+          ctx.fillRect(p.x,p.y,p.size,p.size);
+          if(p.life<=0) particles.splice(i,1);
+        }
+        requestAnimationFrame(step);
+      }
+      step();
     }
-    step();
   }
 
   // Pixel rain (occasional)
@@ -228,13 +233,15 @@
     });
   }
 
-  // Custom Cursor with glitch trails
+  // Custom Cursor with glitch trails (disabled on mobile)
+  let mouseX = 0, mouseY = 0;
+  
+  if(!isMobile){
   const customCursor = document.querySelector('.custom-cursor');
   const trail1 = document.getElementById('trail1');
   const trail2 = document.getElementById('trail2');
   const trail3 = document.getElementById('trail3');
   
-  let mouseX = 0, mouseY = 0;
   let trail1Pos = {x: 0, y: 0};
   let trail2Pos = {x: 0, y: 0};
   let trail3Pos = {x: 0, y: 0};
@@ -398,6 +405,7 @@
     requestAnimationFrame(updateCharacters);
   }
   updateCharacters();
+  }
 
   // Snake Game
   const snakeCanvas = document.getElementById('snakeGame');
