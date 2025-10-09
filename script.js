@@ -139,4 +139,34 @@
   // Footer dino occasional hop
   const footDino = document.querySelector('.site-footer .dino');
   setInterval(()=>{ if(Math.random()<0.15) jump(footDino); }, 2500);
+
+  // Animated stat counters
+  const statNumbers = document.querySelectorAll('.stat-number');
+  const animateCounter = (el) => {
+    const target = parseInt(el.getAttribute('data-target'));
+    const duration = 2000;
+    const increment = target / (duration / 16);
+    let current = 0;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        el.textContent = target;
+        clearInterval(timer);
+      } else {
+        el.textContent = Math.floor(current);
+      }
+    }, 16);
+  };
+
+  // Trigger counter animation on scroll
+  if(window.gsap && statNumbers.length > 0) {
+    statNumbers.forEach(stat => {
+      ScrollTrigger.create({
+        trigger: stat,
+        start: 'top 80%',
+        once: true,
+        onEnter: () => animateCounter(stat)
+      });
+    });
+  }
 })();
