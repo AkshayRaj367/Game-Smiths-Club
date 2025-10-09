@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d0d0d" />
+  <title>Game Smiths Club</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+  <!-- GSAP -->
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js"></script>
+</head>
+<body>
+  <!-- Cursor pixel trail canvas -->
+  <canvas id="cursor-canvas"></canvas>
+
+  <header class="site-header">
+    <div class="logo">
+      <span class="pixel-icon">🎮</span>
+      <span class="logo-text">Game Smiths Club</span>
+    </div>
+    <nav class="nav">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#events">Events</a>
+      <a href="#contact" class="cta">Join Us</a>
+      <button id="modeToggle" aria-label="Toggle Night/Day" title="Toggle Night/Day">☼</button>
+      <button id="musicToggle" aria-label="Toggle Music" title="Toggle Music">♫</button>
+    </nav>
+  </header>
+
+  <!-- Hero with parallax -->
+  <section class="hero" id="home">
+    <div class="parallax">
+      <div class="layer stars" data-depth="0.1"></div>
+      <div class="layer mountains" data-depth="0.25"></div>
+      <div class="layer ground" data-depth="0.5"></div>
+      <div class="layer dino-run" data-depth="0.6" aria-hidden="true">
+        <!-- Simple pixel dino as inline SVG -->
+        <svg class="dino" viewBox="0 0 48 40" width="96" height="80" role="img" aria-label="Running pixel dino">
+          <rect x="10" y="14" width="12" height="10" />
+          <rect x="22" y="10" width="8" height="10" />
+          <rect x="30" y="12" width="6" height="12" />
+          <rect x="18" y="24" width="8" height="6" />
+          <rect x="8" y="24" width="8" height="6" />
+          <rect x="28" y="28" width="6" height="4" />
+          <rect x="14" y="30" width="4" height="6" />
+          <rect x="22" y="30" width="4" height="6" />
+          <rect x="24" y="14" width="2" height="2" class="eye" />
+        </svg>
+      </div>
+    </div>
+    <div class="hero-content">
+      <h1 class="title">Game Smiths Club</h1>
+      <p class="subtitle">Forging the Future of Games, One Pixel at a Time</p>
+      <div class="cta-row">
+        <a href="#contact" class="btn-primary">Join Us</a>
+        <div class="countdown" aria-live="polite">
+          <span class="cd days">00</span>d
+          <span class="cd hours">00</span>h
+          <span class="cd minutes">00</span>m
+          <span class="cd seconds">00</span>s
+        </div>
+      </div>
+      <p class="launch-note">Launching October 17 — Be there!</p>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="section section-grid">
+    <h2 class="section-title">About</h2>
+    <p class="section-lead">We are a college community of developers, designers, musicians, and storytellers forging games together through collaboration, creativity, and code.</p>
+    <div class="tiles team">
+      <div class="card pop" tabindex="0">
+        <div class="avatar pixel" data-color="cyan"></div>
+        <h3>Alex</h3>
+        <p>Club Lead • Design/Code</p>
+      </div>
+      <div class="card pop" tabindex="0">
+        <div class="avatar pixel" data-color="magenta"></div>
+        <h3>Maya</h3>
+        <p>Art • Pixel Wizard</p>
+      </div>
+      <div class="card pop" tabindex="0">
+        <div class="avatar pixel" data-color="green"></div>
+        <h3>Sam</h3>
+        <p>Programming • Gameplay</p>
+      </div>
+      <div class="card pop" tabindex="0">
+        <div class="avatar pixel" data-color="yellow"></div>
+        <h3>Rin</h3>
+        <p>Audio • Chiptunes</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="section">
+    <h2 class="section-title">Projects</h2>
+    <div class="tiles projects">
+      <article class="card flip">
+        <div class="card-face card-front">
+          <h3>Skyline Dash</h3>
+          <p>Endless runner prototype</p>
+        </div>
+        <div class="card-face card-back">
+          <p>Race through futuristic cityscapes, dodge obstacles, and collect power-ups. Built with Unity.</p>
+        </div>
+      </article>
+      <article class="card flip">
+        <div class="card-face card-front">
+          <h3>The Last Exit</h3>
+          <p>Horror Inspired Maze Runner</p>
+        </div>
+        <div class="card-face card-back">
+          <p>Navigate through dark corridors, solve puzzles, and escape the nightmare. Atmospheric horror experience.</p>
+        </div>
+      </article>
+      <article class="card flip">
+        <div class="card-face card-front">
+          <h3>Realish Diwali</h3>
+          <p>A VR Environment For Burning Crackers</p>
+        </div>
+        <div class="card-face card-back">
+          <p>Experience the joy of Diwali safely in VR. Light fireworks, enjoy celebrations, and immerse yourself in the festival.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Events -->
+  <section id="events" class="section">
+    <h2 class="section-title">Events</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <h3>Dino Run Launch Jam</h3>
+          <p>Kickoff jam celebrating launch day. Theme unveiled at start!</p>
+          <span class="tl-date">Oct 17</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <h3>Shader Workshop</h3>
+          <p>Create 2D retro effects using WebGL/GLSL.</p>
+          <span class="tl-date">Oct 28</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <h3>Game Pitch Night</h3>
+          <p>Pitch ideas and form teams for the semester project.</p>
+          <span class="tl-date">Nov 05</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact / Join -->
+  <section id="contact" class="section section-grid">
+    <h2 class="section-title">Join / Contact</h2>
+    <div class="contact-grid">
+      <form class="contact-form" onsubmit="return false;">
+        <label>
+          <span>Name</span>
+          <input type="text" placeholder="Your name" required />
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" placeholder="you@example.com" required />
+        </label>
+        <label>
+          <span>Message</span>
+          <textarea rows="4" placeholder="Tell us what you love about games..."></textarea>
+        </label>
+        <button class="btn-primary" type="submit">Forge With Us</button>
+      </form>
+      <div class="social">
+        <a href="#" class="icon-link discord" aria-label="Discord"><span>Discord</span></a>
+        <a href="#" class="icon-link instagram" aria-label="Instagram"><span>Instagram</span></a>
+        <a href="mailto:gamesmiths@example.edu" class="icon-link email" aria-label="Email"><span>Email</span></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-runner" aria-hidden="true">
+      <svg class="dino small" viewBox="0 0 48 40" width="64" height="54" role="img" aria-label="Running pixel dino">
+        <rect x="10" y="14" width="12" height="10" />
+        <rect x="22" y="10" width="8" height="10" />
+        <rect x="30" y="12" width="6" height="12" />
+        <rect x="18" y="24" width="8" height="6" />
+        <rect x="8" y="24" width="8" height="6" />
+        <rect x="28" y="28" width="6" height="4" />
+        <rect x="14" y="30" width="4" height="6" />
+        <rect x="22" y="30" width="4" height="6" />
+        <rect x="24" y="14" width="2" height="2" class="eye" />
+      </svg>
+    </div>
+    <p>Crafted by Game Smiths Club © 2025</p>
+  </footer>
+
+  <!-- Optional tiny silent audio to toggle (replace src with your chiptune) -->
+  <audio id="bgm" loop preload="auto">
+    <source src="" type="audio/mpeg" />
+  </audio>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
