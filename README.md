@@ -47,7 +47,7 @@ Edit CSS variables in `styles.css`:
 ```
 
 ### Content
-- **Team Memberss**: Edit the About section in `index.html`
+- **Team Members**: Edit the About section in `index.html`
 - **Projects**: Update project cards in the Projects section
 - **Events**: Modify timeline items in the Events section
 - **Social Links**: Update Discord/Instagram/Email links in Contact section
