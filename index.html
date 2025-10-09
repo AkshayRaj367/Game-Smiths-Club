@@ -16,6 +16,19 @@
 <body>
   <!-- Cursor pixel trail canvas -->
   <canvas id="cursor-canvas"></canvas>
+  
+  <!-- Custom cursor -->
+  <div class="custom-cursor"></div>
+  <div class="cursor-trail" id="trail1"></div>
+  <div class="cursor-trail" id="trail2"></div>
+  <div class="cursor-trail" id="trail3"></div>
+  
+  <!-- Interactive Ghosts -->
+  <div class="pacman-container">
+    <div class="ghost ghost-1"></div>
+    <div class="ghost ghost-2"></div>
+    <div class="ghost ghost-3"></div>
+  </div>
 
   <header class="site-header">
     <div class="logo">
@@ -53,30 +66,106 @@
         </svg>
       </div>
     </div>
-    <div class="hero-content">
       <h1 class="title glitch" data-text="Game Smiths Club">
         <span class="title-char" style="--i:0">G</span><span class="title-char" style="--i:1">a</span><span class="title-char" style="--i:2">m</span><span class="title-char" style="--i:3">e</span><span class="title-char" style="--i:4"> </span><span class="title-char" style="--i:5">S</span><span class="title-char" style="--i:6">m</span><span class="title-char" style="--i:7">i</span><span class="title-char" style="--i:8">t</span><span class="title-char" style="--i:9">h</span><span class="title-char" style="--i:10">s</span><span class="title-char" style="--i:11"> </span><span class="title-char" style="--i:12">C</span><span class="title-char" style="--i:13">l</span><span class="title-char" style="--i:14">u</span><span class="title-char" style="--i:15">b</span>
       </h1>
       <p class="subtitle">Forging the Future of Games, One Pixel at a Time</p>
       <div class="cta-row">
-        <a href="#contact" class="btn-primary">Join Us</a>
-        <div class="countdown" aria-live="polite">
-          <span class="cd days">00</span>d
-          <span class="cd hours">00</span>h
-          <span class="cd minutes">00</span>m
-          <span class="cd seconds">00</span>s
-        </div>
+        <button id="registerBtn" class="btn-register">
+          <span class="btn-text"> Register Now</span>
+          <span class="btn-glow"></span>
+          <span class="btn-particles"></span>
+        </button>
+        <a href="#contact" class="btn-primary">Join The Guild</a>
+        <div class="countdown" id="countdown">Loading...</div>
       </div>
-      <p class="launch-note">Launching October 17 — Be there!</p>
+      <p class="launch-note"> Official Launch: October 17</p>
     </div>
   </section>
+
+  <!-- Registration Modal -->
+  <div id="registrationModal" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal">&times;</button>
+      <h2 class="modal-title">🎮 Register for Game Smiths Club</h2>
+      <form id="registrationForm" class="registration-form">
+        <div class="form-row">
+          <label>
+            <span>👤 Full Name</span>
+            <input type="text" name="name" placeholder="Enter your full name" required />
+          </label>
+          <label>
+            <span>📧 Email</span>
+            <input type="email" name="email" placeholder="your.email@example.com" required />
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            <span>📱 Phone Number</span>
+            <input type="tel" name="phone" placeholder="1234567890" required pattern="[0-9]{10}" />
+          </label>
+          <label>
+            <span>🎓 Roll Number</span>
+            <input type="text" name="rollNumber" placeholder="21BCS001" required />
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            <span>📚 Branch</span>
+            <select name="branch" required>
+              <option value="">Select Branch</option>
+              <option value="CSE">Computer Science</option>
+              <option value="IT">Information Technology</option>
+              <option value="ECE">Electronics & Communication</option>
+              <option value="EEE">Electrical & Electronics</option>
+              <option value="MECH">Mechanical</option>
+              <option value="CIVIL">Civil</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </label>
+          <label>
+            <span>📅 Year</span>
+            <select name="year" required>
+              <option value="">Select Year</option>
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+              <option value="4">4th Year</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            <span>🏫 Section</span>
+            <input type="text" name="section" placeholder="A" required maxlength="1" />
+          </label>
+          <label>
+            <span>🎯 Interest Area</span>
+            <select name="interest" required>
+              <option value="">Select Interest</option>
+              <option value="Game Development">Game Development</option>
+              <option value="Programming">Programming</option>
+              <option value="Art & Design">Art & Design</option>
+              <option value="Music & Sound">Music & Sound</option>
+              <option value="3D Modeling">3D Modeling</option>
+              <option value="Game Design">Game Design</option>
+            </select>
+          </label>
+        </div>
+        <button type="submit" class="btn-submit">
+          <span>🚀 Complete Registration</span>
+        </button>
+      </form>
+    </div>
+  </div>
 
   <!-- Stats -->
   <section class="section stats-section">
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-number" data-target="150">0</div>
-        <div class="stat-label">Active Members</div>
+        <div class="stat-number" id="registeredCount" data-target="0">0</div>
+        <div class="stat-label">Registered Members</div>
       </div>
       <div class="stat-card">
         <div class="stat-number" data-target="27">0</div>
@@ -99,44 +188,34 @@
     <p class="section-lead">We are a college community of developers, designers, musicians, and storytellers forging games together through collaboration, creativity, and code.</p>
     <div class="tiles team">
       <div class="card pop" tabindex="0">
-        <div class="avatar pixel" data-color="cyan"></div>
-        <h3>Alex</h3>
-        <p>Club Lead • Design/Code</p>
+        <img src="https://res.cloudinary.com/dqpvhbkdd/image/upload/v1760030156/Sarvan_xmojp9.png" alt="Sarvan" class="team-avatar">
+        <h3>Sarvan</h3>
+        <p>President</p>
+      </div>
+      <div class="card pop" tabindex="0">
+        <img src="https://res.cloudinary.com/dqpvhbkdd/image/upload/v1760030154/pranav_cartve.png" alt="Pranav" class="team-avatar">
+        <h3>Pranav</h3>
+        <p>Vice President</p>
+      </div>
+      <div class="card pop" tabindex="0">
+        <img src="https://res.cloudinary.com/dqpvhbkdd/image/upload/v1760030156/akshay_raj_rcsdnl.png" alt="Akshay Raj" class="team-avatar">
+        <h3>Akshay Raj</h3>
+        <p>Secretary</p>
+      </div>
+      <div class="card pop" tabindex="0">
+        <img src="https://res.cloudinary.com/dqpvhbkdd/image/upload/v1760030156/varshith_jxyq4g.png" alt="Varshith Reddy" class="team-avatar">
+        <h3>Varshith Reddy</h3>
+        <p>Treasurer</p>
+      </div>
+      <div class="card pop" tabindex="0">
+        <img src="https://res.cloudinary.com/dqpvhbkdd/image/upload/v1760030155/annanya_napgvh.png" alt="Ananya" class="team-avatar">
+        <h3>Ananya</h3>
+        <p>PR & Social Media</p>
       </div>
       <div class="card pop" tabindex="0">
         <div class="avatar pixel" data-color="magenta"></div>
-        <h3>Maya</h3>
-        <p>Art • Pixel Wizard</p>
-      </div>
-      <div class="card pop" tabindex="0">
-        <div class="avatar pixel" data-color="green"></div>
-        <h3>Sam</h3>
-        <p>Programming • Gameplay</p>
-      </div>
-      <div class="card pop" tabindex="0">
-        <div class="avatar pixel" data-color="yellow"></div>
-        <h3>Rin</h3>
-        <p>Audio • Chiptunes</p>
-      </div>
-      <div class="card pop" tabindex="0">
-        <div class="avatar pixel" data-color="cyan"></div>
-        <h3>Jordan</h3>
-        <p>3D Artist • Modeling</p>
-      </div>
-      <div class="card pop" tabindex="0">
-        <div class="avatar pixel" data-color="magenta"></div>
-        <h3>Kai</h3>
-        <p>Narrative • Writer</p>
-      </div>
-      <div class="card pop" tabindex="0">
-        <div class="avatar pixel" data-color="green"></div>
-        <h3>Zara</h3>
-        <p>UI/UX • Interface Design</p>
-      </div>
-      <div class="card pop" tabindex="0">
-        <div class="avatar pixel" data-color="yellow"></div>
-        <h3>Leo</h3>
-        <p>AI/ML • Game Intelligence</p>
+        <h3>Keerthana</h3>
+        <p>Logistics</p>
       </div>
     </div>
   </section>
@@ -275,30 +354,82 @@
 
   <!-- Contact / Join -->
   <section id="contact" class="section section-grid">
-    <h2 class="section-title">Join / Contact</h2>
+    <h2 class="section-title">Join The Guild</h2>
+    <p class="section-lead">Ready to forge legendary games? Connect with us and become part of our creative community!</p>
     <div class="contact-grid">
       <form class="contact-form" onsubmit="return false;">
         <label>
-          <span>Name</span>
-          <input type="text" placeholder="Your name" required />
+          <span>🎮 Your Name</span>
+          <input type="text" placeholder="Enter your name" required />
         </label>
         <label>
-          <span>Email</span>
+          <span>📧 Email Address</span>
           <input type="email" placeholder="you@example.com" required />
         </label>
         <label>
-          <span>Message</span>
-          <textarea rows="4" placeholder="Tell us what you love about games..."></textarea>
+          <span>🎯 Your Interest</span>
+          <select style="background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--fg);padding:14px;outline:none;font-family:inherit;">
+            <option>Game Development</option>
+            <option>Art & Design</option>
+            <option>Music & Sound</option>
+            <option>Programming</option>
+            <option>Just Curious!</option>
+          </select>
         </label>
-        <button class="btn-primary" type="submit">Forge With Us</button>
+        <label>
+          <span>💬 Message</span>
+          <textarea rows="3" placeholder="Tell us what excites you about game development..."></textarea>
+        </label>
+        <button class="btn-primary" type="submit">🚀 Join The Adventure</button>
       </form>
-      <div class="social">
-        <a href="#" class="icon-link discord" aria-label="Discord"><span>Discord</span></a>
-        <a href="#" class="icon-link instagram" aria-label="Instagram"><span>Instagram</span></a>
-        <a href="mailto:gamesmiths@example.edu" class="icon-link email" aria-label="Email"><span>Email</span></a>
+      <div class="social-container">
+        <h3 class="social-title">Connect With Us</h3>
+        <div class="social">
+          <a href="https://discord.gg/t5BBAVPJ" target="_blank" rel="noopener noreferrer" class="icon-link discord" aria-label="Discord">
+            <span>💬 Discord Community</span>
+          </a>
+          <a href="https://www.instagram.com/thegamesmiths" target="_blank" rel="noopener noreferrer" class="icon-link instagram" aria-label="Instagram">
+            <span>📸 Instagram</span>
+          </a>
+          <a href="mailto:gamesmiths@example.edu" class="icon-link email" aria-label="Email">
+            <span>✉️ Email Us</span>
+          </a>
+          <a href="#" class="icon-link discord" aria-label="GitHub" style="border-color:var(--c-yellow)">
+            <span>💻 GitHub</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
+
+  <!-- Mini Games Row -->
+  <div class="mini-games-row">
+    <!-- Mini Game: Snake -->
+    <section class="mini-game-section">
+      <h2 class="section-title">🐍 Snake Game</h2>
+      <div class="game-container">
+        <canvas id="snakeGame" width="300" height="300"></canvas>
+        <div class="game-controls">
+          <p>Arrow Keys / WASD</p>
+          <button id="snakeStart" class="btn-primary">Start</button>
+          <div class="game-score">Score: <span id="snakeScore">0</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mini Game: Pong -->
+    <section class="mini-game-section">
+      <h2 class="section-title">🏓 Retro Pong</h2>
+      <div class="game-container">
+        <canvas id="pongGame" width="400" height="300"></canvas>
+        <div class="game-controls">
+          <p>Mouse to control</p>
+          <button id="pongStart" class="btn-primary">Start</button>
+          <div class="game-score">Score: <span id="pongScore">0</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <footer class="site-footer">
     <div class="footer-runner" aria-hidden="true">

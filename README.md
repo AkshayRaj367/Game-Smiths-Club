@@ -20,8 +20,15 @@ A pixel-themed, retro-gaming inspired website for a college game development clu
 
 ## 🚀 Getting Started
 
+### Frontend Only (Static)
 1. **Open the project**: Simply open `index.html` in your browser
 2. **No build required**: Pure HTML/CSS/JS with CDN dependencies
+
+### With MongoDB Backend
+1. **Install dependencies**: `npm install`
+2. **Create .env file**: Copy `.env.example` to `.env` and add your MongoDB URI
+3. **Start server**: `npm start`
+4. **Open browser**: Navigate to `http://localhost:3000`
 
 ### Optional: Add Background Music
 To enable the music toggle, add an audio file:
