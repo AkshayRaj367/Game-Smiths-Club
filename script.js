@@ -56,6 +56,55 @@
   }
   setInterval(tick,1000); tick();
 
+  // Title Pixel Explosion Effect
+  const heroTitle = document.querySelector('.hero .title');
+  let isExploded = false;
+  let reappearTimer = null;
+  
+  heroTitle?.addEventListener('click', function() {
+    if (isExploded) {
+      // Reappear
+      this.classList.remove('exploded');
+      isExploded = false;
+      if(reappearTimer) clearTimeout(reappearTimer);
+    } else {
+      // Explode
+      const rect = this.getBoundingClientRect();
+      const colors = ['#00ffff', '#ff00ff', '#00ff99', '#ffe066', '#00aaff'];
+      
+      // Create pixels
+      for (let i = 0; i < 50; i++) {
+        const pixel = document.createElement('div');
+        pixel.className = 'explosion-pixel';
+        pixel.style.left = rect.left + rect.width / 2 + 'px';
+        pixel.style.top = rect.top + rect.height / 2 + 'px';
+        pixel.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = 100 + Math.random() * 200;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+        
+        pixel.style.setProperty('--vx', vx + 'px');
+        pixel.style.setProperty('--vy', vy + 'px');
+        
+        document.body.appendChild(pixel);
+        
+        // Remove pixel after animation
+        setTimeout(() => pixel.remove(), 1000);
+      }
+      
+      this.classList.add('exploded');
+      isExploded = true;
+      
+      // Auto-reappear after 3 seconds
+      reappearTimer = setTimeout(() => {
+        this.classList.remove('exploded');
+        isExploded = false;
+      }, 3000);
+    }
+  });
+
   // GSAP scroll reveals
   if(window.gsap){
     gsap.registerPlugin(ScrollTrigger);
@@ -134,7 +183,16 @@
     el.style.transform='translateY(-40px)';
     setTimeout(()=>{el.style.transform='translateY(0)'; setTimeout(()=>{jumping=false;}, 520);}, 300);
   }
-  window.addEventListener('keydown', (e)=>{ if(e.code==='Space'){ e.preventDefault(); jump(heroDino); } });
+  window.addEventListener('keydown', (e)=>{ 
+    if(e.code==='Space'){ 
+      // Only prevent default if not typing in input/textarea
+      const activeEl = document.activeElement;
+      if(activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA') {
+        e.preventDefault(); 
+        jump(heroDino); 
+      }
+    } 
+  });
 
   // Footer dino occasional hop
   const footDino = document.querySelector('.site-footer .dino');
