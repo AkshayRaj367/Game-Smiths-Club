@@ -568,9 +568,9 @@ body{cursor:none}
   .tiles.team{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important;gap:15px;padding:0 0 0 10px!important;justify-items:center;width:100%;margin:0 auto}
   .tiles.team .card{width:100%;max-width:220px;padding:15px 20px 15px 15px!important;margin:0!important;text-align:center!important}
   /* Default team avatars - crop in half */
-  .team-avatar{width:200px!important;height:180px!important;object-fit:cover!important;object-position:center 15%!important;margin:0 auto 8px!important;display:block!important;transform:translateX(-15px)!important}
+  .team-avatar{width:200px!important;height:180px!important;object-fit:cover!important;object-position:center 15%!important;margin:0 auto 8px!important;display:block!important;transform:translateX(-5px)!important}
   /* Keerthana's image - show more body, same card height */
-  .team-avatar-full{width:200px!important;height:180px!important;object-fit:cover!important;object-position:center 30%!important;margin:0 auto 8px!important;display:block!important;transform:translateX(-15px)!important}
+  .team-avatar-full{width:200px!important;height:180px!important;object-fit:cover!important;object-position:center 30%!important;margin:0 auto 8px!important;display:block!important;transform:translateX(-5px)!important}
   .tiles.team .card h3{margin-top:5px!important;margin-bottom:3px!important}
   .tiles.team .card p{margin-top:3px!important}
   
