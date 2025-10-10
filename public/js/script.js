@@ -176,18 +176,20 @@
     });
   }
 
-  // Parallax - throttled for performance
+  // Parallax - throttled for performance, disabled on mobile
   const layers = document.querySelectorAll('.layer');
-  const parallax = throttle(function(){
-    const sc = window.scrollY;
-    layers.forEach(l=>{
-      const depth = parseFloat(l.getAttribute('data-depth')||'0');
-      l.style.transform = `translateY(${sc*depth*-0.15}px)`;
-    });
-  }, 16); // ~60fps
-  
-  window.addEventListener('scroll', parallax, {passive:true});
-  parallax();
+  if(!isMobile){
+    const parallax = throttle(function(){
+      const sc = window.scrollY;
+      layers.forEach(l=>{
+        const depth = parseFloat(l.getAttribute('data-depth')||'0');
+        l.style.transform = `translateY(${sc*depth*-0.15}px)`;
+      });
+    }, 16); // ~60fps
+    
+    window.addEventListener('scroll', parallax, {passive:true});
+    parallax();
+  }
 
   // Cursor pixel trail - optimized particle system
   if(!isMobile){
@@ -245,31 +247,33 @@
     }
   }
 
-  // Pixel rain - reduced frequency
-  function spawnPixelRain(){
-    const drop=document.createElement('div');
-    drop.className='pixel-drop';
-    drop.style.left = Math.random()*100 + 'vw';
-    drop.style.top = '-5vh';
-    document.body.appendChild(drop);
-    const endY = 105;
-    const duration = 3000 + Math.random()*2000;
-    const start = performance.now();
-    function animate(ts){
-      const t=(ts-start)/duration; 
-      if(t>=1){
-        drop.remove();
-        return;
+  // Pixel rain - disabled on mobile for performance
+  if(!isMobile){
+    function spawnPixelRain(){
+      const drop=document.createElement('div');
+      drop.className='pixel-drop';
+      drop.style.left = Math.random()*100 + 'vw';
+      drop.style.top = '-5vh';
+      document.body.appendChild(drop);
+      const endY = 105;
+      const duration = 3000 + Math.random()*2000;
+      const start = performance.now();
+      function animate(ts){
+        const t=(ts-start)/duration; 
+        if(t>=1){
+          drop.remove();
+          return;
+        }
+        drop.style.top = (-5 + t*(endY+5)) + 'vh';
+        requestAnimationFrame(animate);
       }
-      drop.style.top = (-5 + t*(endY+5)) + 'vh';
       requestAnimationFrame(animate);
     }
-    requestAnimationFrame(animate);
+    // Reduced frequency
+    setInterval(()=>{ 
+      if(Math.random()<0.2) spawnPixelRain(); 
+    }, 2000);
   }
-  // Reduced frequency
-  setInterval(()=>{ 
-    if(Math.random()<0.2) spawnPixelRain(); 
-  }, 2000);
 
   // Dino jump
   const heroDino = document.querySelector('.hero .dino');

@@ -343,6 +343,56 @@ img{content-visibility:auto}
 .card{contain:layout style paint}
 .layer{will-change:transform}
 
+/* Mobile performance optimizations */
+@media (max-width:768px){
+  /* Disable heavy animations on mobile */
+  .title-char{
+    animation:none!important;
+    transform:none!important;
+    filter:none!important;
+  }
+  
+  .title{
+    animation:none!important;
+  }
+  
+  /* Simplify parallax on mobile */
+  .layer.stars{
+    background:radial-gradient(1px 1px at 20% 30%, #fff6 60%, #0000 61%),
+               radial-gradient(1px 1px at 60% 70%, #fff6 60%, #0000 61%);
+  }
+  
+  /* Disable dino animation on mobile */
+  .layer.dino-run{
+    display:none;
+  }
+  
+  /* Reduce glow effects */
+  .btn-primary,.stat-card{
+    box-shadow:none!important;
+  }
+  
+  /* Disable hover effects */
+  .stat-card:hover,.digit-box:hover{
+    transform:none!important;
+  }
+  
+  /* Simplify countdown */
+  .digit-box{
+    box-shadow:0 4px 0 #cc0000,0 6px 10px rgba(0,0,0,.3);
+  }
+  
+  /* Reduce particle effects */
+  #cursor-canvas{
+    display:none!important;
+  }
+  
+  /* Disable ghost animations */
+  .ghost{
+    animation:none!important;
+  }
+}
+
 /* Heavily Animated Register Button */
 .btn-register{position:relative;background:linear-gradient(135deg,#00ffff,#ff00ff,#00ff99);padding:18px 40px;border:none;border-radius:50px;font-size:18px;font-weight:800;color:#000;cursor:none;overflow:hidden;box-shadow:0 0 30px rgba(0,255,255,.6),0 0 60px rgba(255,0,255,.4),0 10px 40px rgba(0,0,0,.5);animation:btn-float 3s ease-in-out infinite,btn-pulse 2s ease-in-out infinite;transition:transform .3s ease;text-transform:uppercase;letter-spacing:2px;margin:0 auto;display:block}
 .btn-register:hover{transform:scale(1.15) translateY(-5px);box-shadow:0 0 50px rgba(0,255,255,.9),0 0 80px rgba(255,0,255,.7),0 15px 50px rgba(0,0,0,.6)}
