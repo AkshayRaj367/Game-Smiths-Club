@@ -499,6 +499,25 @@
     initSnake();
   });
 
+  // Mobile controls for snake game
+  if(isMobile) {
+    const mobileControls = document.querySelector('.mobile-controls');
+    if(mobileControls) mobileControls.style.display = 'flex';
+    
+    const mobileBtns = document.querySelectorAll('.mobile-btn');
+    mobileBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const direction = btn.getAttribute('data-direction');
+        const event = new KeyboardEvent('keydown', {
+          key: direction === 'up' ? 'ArrowUp' : 
+               direction === 'down' ? 'ArrowDown' :
+               direction === 'left' ? 'ArrowLeft' : 'ArrowRight'
+        });
+        document.dispatchEvent(event);
+      });
+    });
+  }
+
   // Pong Game
   const pongCanvas = document.getElementById('pongGame');
   const pongCtx = pongCanvas?.getContext('2d');
