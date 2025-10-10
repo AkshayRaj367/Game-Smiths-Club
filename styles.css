@@ -190,7 +190,17 @@ body{cursor:none}
 @keyframes trail-glitch3{0%{transform:translate(0,0)}33%{transform:translate(-1px,-2px)}66%{transform:translate(1px,2px)}100%{transform:translate(0,0)}}
 
 /* Ghost Interactive Elements */
+/* 
+ * This section contains the styles for the ghost interactive elements used throughout the website.
+ * The styles are for the pacman container, ghost elements and their animations.
+ */
+
 .pacman-container{position:fixed;pointer-events:none;z-index:4;inset:0;overflow:hidden}
+
+/* 
+ * The ghost class is used to create the ghost interactive elements.
+ * The styles are for the ghost elements and their animations.
+ */
 
 .ghost{
   position:fixed;
@@ -232,38 +242,25 @@ body{cursor:none}
   50%{transform:translateY(-8px)}
 }
 
-.ghost-1{
-  background:var(--c-cyan);
-  filter:drop-shadow(0 0 10px var(--c-cyan));
-}
-
-.ghost-1:before{background:var(--c-cyan)}
-
-.ghost-2{
-  background:var(--c-green);
-  filter:drop-shadow(0 0 10px var(--c-green));
-}
-
-.ghost-2:before{background:var(--c-green)}
-
-.ghost-3{
-  background:#FF0000;
-  filter:drop-shadow(0 0 10px #FF0000);
-}
-
-.ghost-3:before{background:#FF0000}
-
 /* Mini Games Section */
+/* 
+ * This section contains the styles for the mini games section.
+ * The styles are for the mini games row, mini game section, game container, game controls and game score.
+ */
+
 .mini-games-row{display:flex;gap:20px;justify-content:center;align-items:flex-start;flex-wrap:wrap;max-width:1400px;margin:40px auto;padding:0 20px}
+
 .mini-game-section{background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.08);border-radius:16px;flex:1;min-width:320px;max-width:500px}
+
 .game-container{display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px}
+
 .game-container canvas{border:3px solid var(--c-cyan);border-radius:8px;background:#000;box-shadow:0 0 20px rgba(0,255,255,.3),inset 0 0 20px rgba(0,255,255,.1);image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges;width:100%;max-width:350px;height:auto}
 #snakeGame{max-width:300px}
 #pongGame{max-width:400px}
 .game-controls{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .game-controls p{margin:0;opacity:.9;font-size:12px}
 .game-score{font-family:"Press Start 2P",monospace;font-size:14px;color:var(--c-green);text-shadow:0 0 10px var(--c-green);margin-top:4px}
-.section-title{font-size:clamp(12px,2vw,16px)}
+.section-title{font-size: clamp(12px,2vw,16px)}
 
 /* Responsive */
 @media (max-width:900px){
