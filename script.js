@@ -233,18 +233,11 @@
     });
   }
 
-  // Custom Cursor with glitch trails (disabled on mobile)
+  // Custom Cursor (disabled on mobile)
   let mouseX = 0, mouseY = 0;
   
   if(!isMobile){
   const customCursor = document.querySelector('.custom-cursor');
-  const trail1 = document.getElementById('trail1');
-  const trail2 = document.getElementById('trail2');
-  const trail3 = document.getElementById('trail3');
-  
-  let trail1Pos = {x: 0, y: 0};
-  let trail2Pos = {x: 0, y: 0};
-  let trail3Pos = {x: 0, y: 0};
   
   document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
@@ -254,39 +247,6 @@
       customCursor.style.top = mouseY + 'px';
     }
   });
-  
-  // Animate cursor trails with glitch effect
-  function updateCursorTrails() {
-    // Trail 1 - closest, magenta
-    trail1Pos.x += (mouseX - trail1Pos.x) * 0.15;
-    trail1Pos.y += (mouseY - trail1Pos.y) * 0.15;
-    if(trail1) {
-      trail1.style.left = trail1Pos.x + 'px';
-      trail1.style.top = trail1Pos.y + 'px';
-      trail1.style.opacity = '0.5';
-    }
-    
-    // Trail 2 - medium distance, green
-    trail2Pos.x += (mouseX - trail2Pos.x) * 0.1;
-    trail2Pos.y += (mouseY - trail2Pos.y) * 0.1;
-    if(trail2) {
-      trail2.style.left = trail2Pos.x + 'px';
-      trail2.style.top = trail2Pos.y + 'px';
-      trail2.style.opacity = '0.35';
-    }
-    
-    // Trail 3 - farthest, yellow
-    trail3Pos.x += (mouseX - trail3Pos.x) * 0.06;
-    trail3Pos.y += (mouseY - trail3Pos.y) * 0.06;
-    if(trail3) {
-      trail3.style.left = trail3Pos.x + 'px';
-      trail3.style.top = trail3Pos.y + 'px';
-      trail3.style.opacity = '0.25';
-    }
-    
-    requestAnimationFrame(updateCursorTrails);
-  }
-  updateCursorTrails();
 
   // Hover effect on interactive elements
   const interactiveElements = document.querySelectorAll('a, button, .card, input, textarea');
@@ -389,8 +349,8 @@
       const gCenterX = gRect.left + gRect.width / 2;
       const gCenterY = gRect.top + gRect.height / 2;
       const angle = Math.atan2(mouseY - gCenterY, mouseX - gCenterX);
-      const eyeX = 10 + Math.cos(angle) * 3;
-      const eyeY = 14 + Math.sin(angle) * 3;
+      const eyeX = 6 + Math.cos(angle) * 1.5;
+      const eyeY = 9 + Math.sin(angle) * 1.5;
       
       const styleId = `ghost${index + 1}-eye-style`;
       const existingStyle = document.getElementById(styleId);
