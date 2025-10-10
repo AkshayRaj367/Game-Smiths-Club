@@ -10,20 +10,20 @@
   --card:#ffffff; --glow:0 0 10px rgba(0,170,255,.35);
 }
 *{box-sizing:border-box}
-html,body{height:100%}
+html,body{height:100%;overflow-x:hidden;width:100%}
 body{
   margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif; color:var(--fg);
   background:linear-gradient(180deg,var(--bg),var(--bg2));
-  overflow-x:hidden;
+  overflow-x:hidden;max-width:100vw;
 }
 #cursor-canvas{position:fixed;inset:0;pointer-events:none;z-index:2}
 
 /* Header */
-.site-header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,.2));backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.06)}
-.logo{display:flex;gap:10px;align-items:center;font-family:"Press Start 2P",monospace;font-size:14px;letter-spacing:1px}
+.site-header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,.2));backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.06);width:100%;max-width:100vw}
+.logo{display:flex;gap:10px;align-items:center;font-family:"Press Start 2P",monospace;font-size:14px;letter-spacing:1px;white-space:nowrap}
 .logo .pixel-icon{filter:drop-shadow(0 0 8px rgba(0,255,255,.5))}
-.nav{display:flex;gap:14px;align-items:center}
-.nav a{color:var(--fg);text-decoration:none;opacity:.9;cursor:none}
+.nav{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.nav a{color:var(--fg);text-decoration:none;opacity:.9;cursor:none;white-space:nowrap}
 .nav a.cta{padding:10px 14px;border:2px solid var(--c-green);box-shadow:var(--glow);border-radius:6px}
 .nav button{background:#0000;color:var(--fg);border:1px solid rgba(255,255,255,.2);padding:8px 10px;border-radius:6px;cursor:none}
 
@@ -51,7 +51,7 @@ body{
 .dino .eye{fill:#0a0a0a}
 
 .hero-content{text-align:center;position:relative;z-index:1}
-.title{font-family:"Press Start 2P",monospace;font-size:clamp(40px,8vw,80px);text-shadow:0 0 10px rgba(0,255,255,.4),0 0 20px rgba(255,0,255,.25);position:relative;display:inline-block;cursor:none;transition:opacity .3s ease}
+.title{font-family:"Press Start 2P",monospace;font-size:clamp(24px,8vw,80px);text-shadow:0 0 10px rgba(0,255,255,.4),0 0 20px rgba(255,0,255,.25);position:relative;display:inline-block;cursor:none;transition:opacity .3s ease;word-break:break-word;max-width:100%}
 .title.exploded{opacity:0;pointer-events:none}
 .title.glitch{animation:glitch-skew 3s infinite}
 .title.glitch:before,.title.glitch:after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;background:transparent}
@@ -67,8 +67,8 @@ body{
 .subtitle{margin:10px auto 20px;max-width:820px;opacity:.9}
 .cta-row{display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;flex-direction:column}
 .btn-primary{background:linear-gradient(90deg,var(--c-cyan),var(--c-mag));border:none;color:#071013;padding:12px 18px;border-radius:8px;font-weight:800;letter-spacing:.3px;text-decoration:none;box-shadow:0 0 14px rgba(0,255,255,.35), 0 0 18px rgba(255,0,255,.25);cursor:none}
-.countdown-wrapper{width:100%;display:flex;justify-content:center;align-items:center;margin:20px 0}
-.countdown{display:flex;gap:20px;align-items:center;justify-content:center;visibility:visible!important;opacity:1!important}
+.countdown-wrapper{width:100%;display:flex;justify-content:center;align-items:center;margin:20px 0;max-width:100%;overflow:hidden}
+.countdown{display:flex;gap:20px;align-items:center;justify-content:center;visibility:visible!important;opacity:1!important;flex-wrap:wrap;max-width:100%}
 .time-unit{display:flex;flex-direction:column;align-items:center;gap:8px;animation:pop-in 0.6s cubic-bezier(0.68,-0.55,0.265,1.55) backwards}
 .time-unit:nth-child(1){animation-delay:0.1s}
 .time-unit:nth-child(2){animation-delay:0.2s}
@@ -292,25 +292,40 @@ body{cursor:none}
 @media (max-width:900px){
   .contact-grid{grid-template-columns:1fr}
   .timeline:before{left:12px}
-  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:16px}
   .tiles.team{grid-template-columns:1fr}
-  .nav{gap:10px}
-  .nav a{font-size:13px;padding:8px 10px}
-  .logo{font-size:12px}
-  .section{padding:60px 15px}
-  .hero{min-height:70vh;padding:60px 15px 80px}
-  .digit-box{min-width:60px;padding:12px 15px}
-  .digit-box span{font-size:20px}
-  .label{font-size:9px}
-  .countdown{gap:12px}
+  .nav{gap:8px;flex-wrap:wrap}
+  .nav a{font-size:11px;padding:6px 8px}
+  .logo{font-size:10px;gap:6px}
+  .logo-text{display:none}
+  .section{padding:60px 15px;max-width:100vw;overflow-x:hidden}
+  .hero{min-height:70vh;padding:60px 15px 80px;max-width:100vw;overflow-x:hidden}
+  .hero-content{max-width:100%;padding:0 10px}
+  .title{font-size:clamp(20px,6vw,40px);line-height:1.2;text-align:center}
+  .subtitle{font-size:14px;padding:0 10px}
+  .digit-box{min-width:55px;padding:10px 12px}
+  .digit-box span{font-size:18px}
+  .label{font-size:8px}
+  .countdown{gap:10px}
+  .btn-primary,.btn-register{font-size:14px;padding:12px 20px;max-width:90%;margin:0 auto}
+  .cta-row{width:100%;max-width:100%;padding:0 10px}
 }
 @media (max-width:500px){
-  .stats-grid{grid-template-columns:1fr}
-  .cta-row{gap:12px}
-  .btn-primary{padding:10px 16px;font-size:14px}
-  .digit-box{min-width:50px;padding:10px 12px}
-  .digit-box span{font-size:18px}
-  .countdown{gap:8px}
+  .stats-grid{grid-template-columns:1fr;gap:12px;padding:0 10px}
+  .cta-row{gap:12px;width:100%;padding:0 10px}
+  .btn-primary,.btn-register{padding:10px 16px;font-size:13px;width:100%;max-width:280px}
+  .digit-box{min-width:45px;padding:8px 10px;border:3px solid #fff;box-shadow:0 6px 0 #cc0000,0 8px 15px rgba(0,0,0,.4),inset 0 -3px 0 rgba(0,0,0,.3),inset 0 3px 0 rgba(255,255,255,.3)}
+  .digit-box span{font-size:16px}
+  .label{font-size:7px;letter-spacing:0.5px}
+  .countdown{gap:6px;flex-wrap:nowrap;justify-content:center;max-width:100%;padding:0 5px}
+  .time-unit{min-width:0}
+  .title{font-size:clamp(18px,5vw,32px);padding:0 5px}
+  .hero{padding:40px 10px 60px}
+  .section{padding:40px 10px}
+  .site-header{padding:10px 15px}
+  .nav{gap:6px}
+  .nav a{font-size:10px;padding:5px 7px}
+  .nav button{padding:6px 8px;font-size:14px}
 }
 @media (max-width:1100px){
   .mini-games-row{flex-direction:column;align-items:center}
@@ -323,8 +338,39 @@ body{cursor:none}
 
 /* Mobile Optimizations - Disable heavy animations */
 @media (max-width:768px){
+  /* Prevent horizontal scroll */
+  *{max-width:100vw;overflow-x:hidden}
+  .hero,.section,.site-header,.site-footer{max-width:100vw;overflow-x:hidden}
+  
+  /* Fix title wrapping */
+  .title{font-size:clamp(18px,5.5vw,36px)!important;line-height:1.3!important;word-wrap:break-word;overflow-wrap:break-word;hyphens:auto;max-width:95vw!important;margin:0 auto}
+  
+  /* Fix countdown layout */
+  .countdown-wrapper{padding:0 5px;max-width:100vw;overflow:visible}
+  .countdown{gap:8px!important;padding:0 5px;max-width:100%;justify-content:center;flex-wrap:nowrap!important}
+  .time-unit{flex:0 0 auto;min-width:0}
+  .digit-box{min-width:48px!important;padding:8px 10px!important;font-size:14px!important}
+  .digit-box span{font-size:16px!important}
+  .label{font-size:7px!important;margin-bottom:4px}
+  
+  /* Fix button sizes */
+  .btn-register,.btn-primary{max-width:85vw!important;font-size:13px!important;padding:12px 16px!important;white-space:normal;text-align:center}
+  
+  /* Fix stats grid */
+  .stats-grid{grid-template-columns:1fr!important;gap:12px;padding:0 15px;max-width:100vw}
+  .stat-card{max-width:100%;margin:0 auto}
+  
+  /* Fix header */
+  .site-header{padding:10px 12px!important;gap:8px}
+  .logo{font-size:9px!important;gap:5px}
+  .logo-text{display:none!important}
+  .nav{gap:5px!important;flex-wrap:wrap;justify-content:flex-end}
+  .nav a{font-size:9px!important;padding:5px 7px!important}
+  .nav button{padding:5px 7px!important;font-size:12px!important}
+  
+  
   /* Disable title character animations */
-  .title-char{animation:none!important;transform:none!important;filter:none!important}
+  .title-char{animation:none!important;transform:none!important;filter:none!important;display:inline!important}
   
   /* Disable glitch effects */
   .title.glitch{animation:none!important}
@@ -365,6 +411,23 @@ body{cursor:none}
   
   /* Disable contact section background animation */
   #contact:before{animation:none!important;display:none!important}
+  
+  /* Fix tiles and cards */
+  .tiles{grid-template-columns:1fr!important;gap:12px;padding:0 10px;max-width:100vw}
+  .card{max-width:100%;margin:0 auto}
+  .team-avatar{max-width:100%;height:auto}
+  
+  /* Fix contact form */
+  .contact-grid{padding:0 10px;max-width:100vw}
+  .contact-form,.social-container{max-width:100%;padding:20px 15px}
+  
+  /* Fix timeline */
+  .timeline{max-width:100%;padding:0 10px}
+  
+  /* Fix mini games */
+  .mini-games-row{padding:0 10px;max-width:100vw}
+  .mini-game-section{max-width:100%;padding:15px}
+  .game-container canvas{max-width:100%!important;width:100%!important;height:auto!important}
 }
 
 /* Hide custom cursor and ghosts on mobile/touch devices */
