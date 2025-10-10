@@ -321,6 +321,52 @@ body{cursor:none}
   #snakeGame,#pongGame{width:100%}
 }
 
+/* Mobile Optimizations - Disable heavy animations */
+@media (max-width:768px){
+  /* Disable title character animations */
+  .title-char{animation:none!important;transform:none!important;filter:none!important}
+  
+  /* Disable glitch effects */
+  .title.glitch{animation:none!important}
+  .title.glitch:before,.title.glitch:after{display:none!important}
+  
+  /* Disable parallax layers */
+  .layer{transform:none!important}
+  .layer.dino-run{display:none!important}
+  
+  /* Disable pixel rain */
+  .pixel-drop{display:none!important}
+  
+  /* Simplify button animations */
+  .btn-register{animation:none!important}
+  .btn-register .btn-glow,.btn-register .btn-particles{display:none!important}
+  .btn-register:hover{transform:scale(1.05)!important}
+  
+  /* Simplify countdown animations */
+  .time-unit{animation:none!important}
+  .digit-box:hover{transform:none!important}
+  
+  /* Disable card hover effects */
+  .card.pop:hover{transform:translateY(-5px)!important;box-shadow:0 10px 20px rgba(0,0,0,.3)!important}
+  .stat-card:hover{transform:translateY(-4px) scale(1.02)!important;box-shadow:0 0 15px rgba(0,255,153,.2)!important}
+  
+  /* Simplify modal animations */
+  .modal-content{animation:modal-fade-in .3s ease!important}
+  .modal-overlay{animation:overlay-fade .3s ease!important}
+  
+  /* Disable explosion pixels */
+  .explosion-pixel{display:none!important}
+  
+  /* Reduce box shadows for performance */
+  .btn-primary,.btn-register,.stat-card,.card{box-shadow:0 4px 8px rgba(0,0,0,.3)!important}
+  
+  /* Disable footer dino animation */
+  .footer-runner .dino{animation:none!important}
+  
+  /* Disable contact section background animation */
+  #contact:before{animation:none!important;display:none!important}
+}
+
 /* Hide custom cursor and ghosts on mobile/touch devices */
 @media (hover: none) and (pointer: coarse){
   body{cursor:auto!important}

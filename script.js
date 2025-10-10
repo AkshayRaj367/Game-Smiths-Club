@@ -59,57 +59,59 @@
   }
   setInterval(tick,1000); tick();
 
-  // Title Pixel Explosion Effect
+  // Title Pixel Explosion Effect - disabled on mobile for performance
   const heroTitle = document.querySelector('.hero .title');
   let isExploded = false;
   let reappearTimer = null;
   
-  heroTitle?.addEventListener('click', function() {
-    if (isExploded) {
-      // Reappear
-      this.classList.remove('exploded');
-      isExploded = false;
-      if(reappearTimer) clearTimeout(reappearTimer);
-    } else {
-      // Explode
-      const rect = this.getBoundingClientRect();
-      const colors = ['#00ffff', '#ff00ff', '#00ff99', '#ffe066', '#00aaff'];
-      
-      // Create pixels
-      for (let i = 0; i < 50; i++) {
-        const pixel = document.createElement('div');
-        pixel.className = 'explosion-pixel';
-        pixel.style.left = rect.left + rect.width / 2 + 'px';
-        pixel.style.top = rect.top + rect.height / 2 + 'px';
-        pixel.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        
-        const angle = Math.random() * Math.PI * 2;
-        const velocity = 100 + Math.random() * 200;
-        const vx = Math.cos(angle) * velocity;
-        const vy = Math.sin(angle) * velocity;
-        
-        pixel.style.setProperty('--vx', vx + 'px');
-        pixel.style.setProperty('--vy', vy + 'px');
-        
-        document.body.appendChild(pixel);
-        
-        // Remove pixel after animation
-        setTimeout(() => pixel.remove(), 1000);
-      }
-      
-      this.classList.add('exploded');
-      isExploded = true;
-      
-      // Auto-reappear after 3 seconds
-      reappearTimer = setTimeout(() => {
+  if(!isMobile) {
+    heroTitle?.addEventListener('click', function() {
+      if (isExploded) {
+        // Reappear
         this.classList.remove('exploded');
         isExploded = false;
-      }, 3000);
-    }
-  });
+        if(reappearTimer) clearTimeout(reappearTimer);
+      } else {
+        // Explode
+        const rect = this.getBoundingClientRect();
+        const colors = ['#00ffff', '#ff00ff', '#00ff99', '#ffe066', '#00aaff'];
+        
+        // Create pixels
+        for (let i = 0; i < 50; i++) {
+          const pixel = document.createElement('div');
+          pixel.className = 'explosion-pixel';
+          pixel.style.left = rect.left + rect.width / 2 + 'px';
+          pixel.style.top = rect.top + rect.height / 2 + 'px';
+          pixel.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          
+          const angle = Math.random() * Math.PI * 2;
+          const velocity = 100 + Math.random() * 200;
+          const vx = Math.cos(angle) * velocity;
+          const vy = Math.sin(angle) * velocity;
+          
+          pixel.style.setProperty('--vx', vx + 'px');
+          pixel.style.setProperty('--vy', vy + 'px');
+          
+          document.body.appendChild(pixel);
+          
+          // Remove pixel after animation
+          setTimeout(() => pixel.remove(), 1000);
+        }
+        
+        this.classList.add('exploded');
+        isExploded = true;
+        
+        // Auto-reappear after 3 seconds
+        reappearTimer = setTimeout(() => {
+          this.classList.remove('exploded');
+          isExploded = false;
+        }, 3000);
+      }
+    });
+  }
 
-  // GSAP scroll reveals
-  if(window.gsap){
+  // GSAP scroll reveals - simplified on mobile
+  if(window.gsap && !isMobile){
     gsap.registerPlugin(ScrollTrigger);
     gsap.utils.toArray('.tl-item').forEach((el,i)=>{
       gsap.to(el,{opacity:1,y:0,duration:.7,delay:i*0.05,scrollTrigger:{trigger:el,start:'top 85%'}});
@@ -119,17 +121,19 @@
     });
   }
 
-  // Parallax on scroll using GSAP
-  const layers = document.querySelectorAll('.layer');
-  function parallax(){
-    const sc = window.scrollY;
-    layers.forEach(l=>{
-      const depth = parseFloat(l.getAttribute('data-depth')||'0');
-      l.style.transform = `translateY(${sc*depth*-0.15}px)`;
-    });
+  // Parallax on scroll - disabled on mobile for performance
+  if(!isMobile) {
+    const layers = document.querySelectorAll('.layer');
+    function parallax(){
+      const sc = window.scrollY;
+      layers.forEach(l=>{
+        const depth = parseFloat(l.getAttribute('data-depth')||'0');
+        l.style.transform = `translateY(${sc*depth*-0.15}px)`;
+      });
+    }
+    window.addEventListener('scroll', parallax, {passive:true});
+    parallax();
   }
-  window.addEventListener('scroll', parallax, {passive:true});
-  parallax();
 
   // Cursor pixel trail (disabled on mobile)
   if(!isMobile){
@@ -160,24 +164,26 @@
     }
   }
 
-  // Pixel rain (occasional)
-  function spawnPixelRain(){
-    const drop=document.createElement('div');
-    drop.className='pixel-drop';
-    drop.style.left = Math.random()*100 + 'vw';
-    drop.style.top = '-5vh';
-    document.body.appendChild(drop);
-    const endY = 105;
-    const duration = 3000 + Math.random()*2000;
-    const start = performance.now();
-    function animate(ts){
-      const t=(ts-start)/duration; if(t>=1){drop.remove();return;}
-      drop.style.top = (-5 + t*(endY+5)) + 'vh';
+  // Pixel rain - disabled on mobile for performance
+  if(!isMobile) {
+    function spawnPixelRain(){
+      const drop=document.createElement('div');
+      drop.className='pixel-drop';
+      drop.style.left = Math.random()*100 + 'vw';
+      drop.style.top = '-5vh';
+      document.body.appendChild(drop);
+      const endY = 105;
+      const duration = 3000 + Math.random()*2000;
+      const start = performance.now();
+      function animate(ts){
+        const t=(ts-start)/duration; if(t>=1){drop.remove();return;}
+        drop.style.top = (-5 + t*(endY+5)) + 'vh';
+        requestAnimationFrame(animate);
+      }
       requestAnimationFrame(animate);
     }
-    requestAnimationFrame(animate);
+    setInterval(()=>{ if(Math.random()<0.35) spawnPixelRain(); }, 1400);
   }
-  setInterval(()=>{ if(Math.random()<0.35) spawnPixelRain(); }, 1400);
 
   // Easter egg: spacebar makes dino jump
   const heroDino = document.querySelector('.hero .dino');

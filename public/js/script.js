@@ -92,54 +92,56 @@
   setInterval(tick,1000); 
   tick();
 
-  // Title Pixel Explosion - optimized particle count
+  // Title Pixel Explosion - disabled on mobile for performance
   const heroTitle = document.querySelector('.hero .title');
   let isExploded = false;
   let reappearTimer = null;
   
-  heroTitle?.addEventListener('click', function() {
-    if (isExploded) {
-      this.classList.remove('exploded');
-      isExploded = false;
-      if(reappearTimer) clearTimeout(reappearTimer);
-    } else {
-      const rect = this.getBoundingClientRect();
-      const colors = ['#00ffff', '#ff00ff', '#00ff99', '#ffe066', '#00aaff'];
-      
-      // Reduced particle count for performance
-      const particleCount = isMobile ? 25 : 40;
-      
-      for (let i = 0; i < particleCount; i++) {
-        const pixel = document.createElement('div');
-        pixel.className = 'explosion-pixel';
-        pixel.style.left = rect.left + rect.width / 2 + 'px';
-        pixel.style.top = rect.top + rect.height / 2 + 'px';
-        pixel.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        
-        const angle = Math.random() * Math.PI * 2;
-        const velocity = 100 + Math.random() * 200;
-        const vx = Math.cos(angle) * velocity;
-        const vy = Math.sin(angle) * velocity;
-        
-        pixel.style.setProperty('--vx', vx + 'px');
-        pixel.style.setProperty('--vy', vy + 'px');
-        
-        document.body.appendChild(pixel);
-        setTimeout(() => pixel.remove(), 1000);
-      }
-      
-      this.classList.add('exploded');
-      isExploded = true;
-      
-      reappearTimer = setTimeout(() => {
+  if(!isMobile) {
+    heroTitle?.addEventListener('click', function() {
+      if (isExploded) {
         this.classList.remove('exploded');
         isExploded = false;
-      }, 3000);
-    }
-  });
+        if(reappearTimer) clearTimeout(reappearTimer);
+      } else {
+        const rect = this.getBoundingClientRect();
+        const colors = ['#00ffff', '#ff00ff', '#00ff99', '#ffe066', '#00aaff'];
+        
+        // Reduced particle count for performance
+        const particleCount = 40;
+        
+        for (let i = 0; i < particleCount; i++) {
+          const pixel = document.createElement('div');
+          pixel.className = 'explosion-pixel';
+          pixel.style.left = rect.left + rect.width / 2 + 'px';
+          pixel.style.top = rect.top + rect.height / 2 + 'px';
+          pixel.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          
+          const angle = Math.random() * Math.PI * 2;
+          const velocity = 100 + Math.random() * 200;
+          const vx = Math.cos(angle) * velocity;
+          const vy = Math.sin(angle) * velocity;
+          
+          pixel.style.setProperty('--vx', vx + 'px');
+          pixel.style.setProperty('--vy', vy + 'px');
+          
+          document.body.appendChild(pixel);
+          setTimeout(() => pixel.remove(), 1000);
+        }
+        
+        this.classList.add('exploded');
+        isExploded = true;
+        
+        reappearTimer = setTimeout(() => {
+          this.classList.remove('exploded');
+          isExploded = false;
+        }, 3000);
+      }
+    });
+  }
 
-  // GSAP scroll reveals - use Intersection Observer as fallback
-  if(window.gsap){
+  // GSAP scroll reveals - simplified on mobile
+  if(window.gsap && !isMobile){
     gsap.registerPlugin(ScrollTrigger);
     gsap.utils.toArray('.tl-item').forEach((el,i)=>{
       gsap.to(el,{
@@ -160,7 +162,7 @@
       });
     });
   } else {
-    // Fallback to Intersection Observer
+    // Fallback to Intersection Observer - simplified for mobile
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -171,7 +173,7 @@
     }, { threshold: 0.1 });
 
     document.querySelectorAll('.tl-item, .card.pop').forEach(el => {
-      el.style.transition = 'opacity 0.6s, transform 0.6s';
+      el.style.transition = isMobile ? 'opacity 0.3s' : 'opacity 0.6s, transform 0.6s';
       observer.observe(el);
     });
   }
