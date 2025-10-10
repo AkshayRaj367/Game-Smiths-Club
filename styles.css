@@ -64,8 +64,8 @@ body:before{
 .dino{fill:#ccc}
 .dino .eye{fill:#0a0a0a}
 
-.hero-content{text-align:center;position:relative;z-index:1}
-.title{font-family:"Press Start 2P",monospace;font-size:clamp(24px,8vw,80px);text-shadow:0 0 10px rgba(0,255,255,.4),0 0 20px rgba(255,0,255,.25);position:relative;display:inline-block;cursor:none;transition:opacity .3s ease;word-break:break-word;max-width:100%}
+.hero-content{text-align:center;position:relative;z-index:1;overflow:visible;padding:20px 0}
+.title{font-family:"Press Start 2P",monospace;font-size:clamp(28px,8vw,80px);text-shadow:0 0 10px rgba(0,255,255,.4),0 0 20px rgba(255,0,255,.25);position:relative;display:inline-block;cursor:none;transition:opacity .3s ease;word-break:break-word;max-width:100%;overflow:visible}
 .title.exploded{opacity:0;pointer-events:none}
 .title.glitch{animation:glitch-skew 3s infinite}
 .title.glitch:before,.title.glitch:after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;background:transparent}
@@ -358,11 +358,12 @@ body{cursor:none}
   body{background:linear-gradient(180deg,var(--bg),var(--bg2))!important;min-height:100vh}
   
   /* Fix title - individual colored letters with neon */
-  .title{font-size:clamp(18px,5.5vw,36px)!important;line-height:1.3!important;word-wrap:break-word;overflow-wrap:break-word;hyphens:auto;max-width:95vw!important;margin:0 auto;background:none!important;-webkit-background-clip:unset!important;-webkit-text-fill-color:unset!important;background-clip:unset!important}
-  .title-char:nth-child(4n+1){color:var(--c-cyan)!important;text-shadow:0 0 20px var(--c-cyan),0 0 40px var(--c-cyan)!important}
-  .title-char:nth-child(4n+2){color:var(--c-mag)!important;text-shadow:0 0 20px var(--c-mag),0 0 40px var(--c-mag)!important}
-  .title-char:nth-child(4n+3){color:var(--c-green)!important;text-shadow:0 0 20px var(--c-green),0 0 40px var(--c-green)!important}
-  .title-char:nth-child(4n+4){color:var(--c-yellow)!important;text-shadow:0 0 20px var(--c-yellow),0 0 40px var(--c-yellow)!important}
+  .hero-content{overflow:visible!important;padding:30px 0!important}
+  .title{font-size:clamp(20px,6vw,40px)!important;line-height:1.4!important;word-wrap:break-word;overflow-wrap:break-word;hyphens:auto;max-width:95vw!important;margin:0 auto;background:none!important;-webkit-background-clip:unset!important;-webkit-text-fill-color:unset!important;background-clip:unset!important;overflow:visible!important}
+  .title-char:nth-child(4n+1){color:var(--c-cyan)!important;text-shadow:0 0 25px var(--c-cyan),0 0 50px var(--c-cyan),0 0 75px var(--c-cyan)!important}
+  .title-char:nth-child(4n+2){color:var(--c-mag)!important;text-shadow:0 0 25px var(--c-mag),0 0 50px var(--c-mag),0 0 75px var(--c-mag)!important}
+  .title-char:nth-child(4n+3){color:var(--c-green)!important;text-shadow:0 0 25px var(--c-green),0 0 50px var(--c-green),0 0 75px var(--c-green)!important}
+  .title-char:nth-child(4n+4){color:var(--c-yellow)!important;text-shadow:0 0 25px var(--c-yellow),0 0 50px var(--c-yellow),0 0 75px var(--c-yellow)!important}
   
   /* Smaller countdown timer on mobile - fully visible */
   .countdown-wrapper{padding:0 10px 20px;max-width:100vw;overflow:visible;margin:20px 0 40px!important}
@@ -374,31 +375,40 @@ body{cursor:none}
   .digit-box span{font-size:16px!important}
   .time-unit .label{font-size:7px!important;margin:0 0 2px 0!important;padding:0!important;opacity:1!important;display:block!important;visibility:visible!important;color:#fff!important;text-transform:uppercase!important;font-family:"Press Start 2P",monospace!important;text-shadow:0 0 10px var(--c-cyan),2px 2px 0 rgba(0,0,0,.5)!important;letter-spacing:1px!important;font-weight:bold!important}
   
-  /* Fix button sizes - better mobile styling */
+  /* Gamey Minimalistic Button */
   .btn-register,.btn-primary{
-    max-width:250px!important;
-    width:250px!important;
-    font-size:13px!important;
-    padding:14px 20px!important;
+    max-width:180px!important;
+    width:180px!important;
+    font-size:10px!important;
+    padding:12px 20px!important;
     white-space:normal;
     text-align:center;
-    border-radius:12px!important;
-    font-weight:800!important;
-    letter-spacing:1px!important;
+    border-radius:50px!important;
+    font-weight:900!important;
+    letter-spacing:2px!important;
     text-transform:uppercase!important;
-    background:linear-gradient(135deg,#00ffff,#ff00ff,#00ff99)!important;
-    border:none!important;
+    background:#00ffff!important;
+    border:3px solid #000!important;
     color:#000!important;
-    box-shadow:0 0 25px rgba(0,255,255,.6),0 0 40px rgba(255,0,255,.4),0 6px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.3)!important;
-    transition:all .3s ease!important;
+    box-shadow:0 4px 0 #000,0 8px 15px rgba(0,0,0,.3)!important;
+    transition:all .1s ease!important;
     cursor:pointer!important;
     -webkit-tap-highlight-color:transparent!important;
     margin:0 auto!important;
     display:block!important;
+    position:relative!important;
+    transform:translateY(0)!important;
+  }
+  .btn-register:before,.btn-primary:before{
+    content:"▶"!important;
+    position:absolute!important;
+    left:15px!important;
+    font-size:10px!important;
+    color:#000!important;
   }
   .btn-register:active,.btn-primary:active{
-    transform:scale(0.95)!important;
-    box-shadow:0 0 20px rgba(0,255,255,.5),0 0 30px rgba(255,0,255,.3),0 3px 15px rgba(0,0,0,.3)!important;
+    transform:translateY(4px)!important;
+    box-shadow:0 0 0 #000,0 4px 10px rgba(0,0,0,.2)!important;
   }
   
   /* Fix stats grid - make cards equal size with fixed width */
