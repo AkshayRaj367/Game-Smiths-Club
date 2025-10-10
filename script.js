@@ -391,10 +391,22 @@
     const tileCount = snakeCanvas.width / gridSize;
     
     let snake = [{x: 10, y: 10}];
-    let food = {x: 15, y: 15};
     let dx = 0, dy = 0;
     let score = 0;
     let started = false;
+    
+    function generateFood() {
+      let newFood;
+      do {
+        newFood = {
+          x: Math.floor(Math.random() * tileCount),
+          y: Math.floor(Math.random() * tileCount)
+        };
+      } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
+      return newFood;
+    }
+    
+    let food = generateFood();
 
     function drawSnake() {
       snakeCtx.fillStyle = '#00ff99';
@@ -436,10 +448,7 @@
       if(head.x === food.x && head.y === food.y) {
         score += 10;
         if(snakeScoreEl) snakeScoreEl.textContent = score;
-        food = {
-          x: Math.floor(Math.random() * tileCount),
-          y: Math.floor(Math.random() * tileCount)
-        };
+        food = generateFood();
       } else {
         snake.pop();
       }
