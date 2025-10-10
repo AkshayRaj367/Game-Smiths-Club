@@ -112,9 +112,9 @@ body{
 .avatar.pixel[data-color="magenta"]{outline:2px solid var(--c-mag)}
 .avatar.pixel[data-color="green"]{outline:2px solid var(--c-green)}
 .avatar.pixel[data-color="yellow"]{outline:2px solid var(--c-yellow)}
-.team-avatar{width:280px;height:250px;object-fit:cover;object-position:center 20%;margin:0 auto 15px;display:block;image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges;filter:drop-shadow(0 0 20px rgba(0,255,255,.5));border-radius:12px;transition:transform .3s ease,filter .3s ease}
+.team-avatar{width:280px;height:250px;object-fit:cover;object-position:center top;margin:0 auto 15px;display:block;image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges;filter:drop-shadow(0 0 20px rgba(0,255,255,.5));border-radius:12px;transition:transform .3s ease,filter .3s ease}
 .team-avatar:hover{transform:scale(1.05);filter:drop-shadow(0 0 30px rgba(0,255,255,.8)) drop-shadow(0 0 20px rgba(255,0,255,.5))}
-.team-avatar-full{object-fit:cover;object-position:center center;width:280px;height:320px;margin:0 auto 15px;display:block;image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges;filter:drop-shadow(0 0 20px rgba(0,255,255,.5));border-radius:12px;transition:transform .3s ease,filter .3s ease}
+.team-avatar-full{object-fit:cover;object-position:center 30%;width:280px;height:250px;margin:0 auto 15px}
 
 /* Flip cards */
 .card.flip{perspective:1000px}
