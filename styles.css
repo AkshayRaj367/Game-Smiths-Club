@@ -1,6 +1,6 @@
 /* Base Theme */
 :root{
-  --bg:#0d0d0d; --bg2:#1a1a1a;
+  --bg:#0a0a0f; --bg2:#12121a;
   --fg:#e6e6e6; --muted:#b3b3b3;
   --c-cyan:#00ffff; --c-mag:#ff00ff; --c-green:#00ff99; --c-blue:#00aaff; --c-yellow:#ffe066;
   --card:#141414; --glow:0 0 12px rgba(0,255,153,.35);
@@ -13,8 +13,21 @@
 html,body{height:100%;overflow-x:hidden;width:100%}
 body{
   margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif; color:var(--fg);
-  background:linear-gradient(180deg,var(--bg),var(--bg2));
+  background:radial-gradient(ellipse at top,#1a1a2e 0%,#0a0a0f 50%,#000000 100%),linear-gradient(180deg,rgba(0,255,255,.03) 0%,rgba(255,0,255,.03) 100%);
+  background-attachment:fixed;
   overflow-x:hidden;max-width:100vw;
+  position:relative;
+}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:
+    radial-gradient(circle at 20% 30%,rgba(0,255,255,.05) 0%,transparent 50%),
+    radial-gradient(circle at 80% 70%,rgba(255,0,255,.05) 0%,transparent 50%),
+    radial-gradient(circle at 50% 50%,rgba(0,255,153,.03) 0%,transparent 70%);
+  pointer-events:none;
+  z-index:0;
 }
 #cursor-canvas{position:fixed;inset:0;pointer-events:none;z-index:2}
 
@@ -22,6 +35,7 @@ body{
 .site-header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,.2));backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.06);width:100%;max-width:100vw}
 .logo{display:flex;gap:10px;align-items:center;font-family:"Press Start 2P",monospace;font-size:14px;letter-spacing:1px;white-space:nowrap}
 .logo .pixel-icon{filter:drop-shadow(0 0 8px rgba(0,255,255,.5))}
+.logo-text-mobile{display:none}
 .nav{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .nav a{color:var(--fg);text-decoration:none;opacity:.9;cursor:none;white-space:nowrap}
 .nav a.cta{padding:10px 14px;border:2px solid var(--c-green);box-shadow:var(--glow);border-radius:6px}
@@ -165,7 +179,9 @@ body{
 .icon-link:hover:before{opacity:1;right:10px}
 
 /* Footer */
-.site-footer{position:relative;padding:30px 20px;border-top:1px solid rgba(255,255,255,.06);background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.6))}
+.site-footer{position:relative;padding:30px 20px 20px;border-top:1px solid rgba(255,255,255,.06);background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.6))}
+.developer-credit{margin-top:30px;padding-top:20px;border-top:1px solid rgba(255,255,255,.05);font-family:"Press Start 2P",monospace;font-size:10px;color:var(--c-cyan);text-shadow:0 0 10px var(--c-cyan);opacity:.8;letter-spacing:1px}
+.developer-credit:hover{opacity:1;text-shadow:0 0 20px var(--c-cyan),0 0 30px var(--c-cyan)}
 .footer-runner{position:absolute;left:-10%;bottom:16px;right:-10%;height:60px;overflow:visible}
 .footer-runner .dino{animation:runAcross 12s linear infinite}
 @keyframes runAcross{0%{transform:translateX(-10vw)}100%{transform:translateX(110vw)}}
@@ -341,28 +357,34 @@ body{cursor:none}
   html{background:var(--bg)!important}
   body{background:linear-gradient(180deg,var(--bg),var(--bg2))!important;min-height:100vh}
   
-  /* Fix title wrapping and add colorful text */
-  .title{font-size:clamp(18px,5.5vw,36px)!important;line-height:1.3!important;word-wrap:break-word;overflow-wrap:break-word;hyphens:auto;max-width:95vw!important;margin:0 auto;background:linear-gradient(90deg,var(--c-cyan),var(--c-mag),var(--c-green),var(--c-yellow))!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;background-clip:text!important}
+  /* Fix title - individual colored letters with neon */
+  .title{font-size:clamp(18px,5.5vw,36px)!important;line-height:1.3!important;word-wrap:break-word;overflow-wrap:break-word;hyphens:auto;max-width:95vw!important;margin:0 auto;background:none!important;-webkit-background-clip:unset!important;-webkit-text-fill-color:unset!important;background-clip:unset!important}
+  .title-char:nth-child(4n+1){color:var(--c-cyan)!important;text-shadow:0 0 20px var(--c-cyan),0 0 40px var(--c-cyan)!important}
+  .title-char:nth-child(4n+2){color:var(--c-mag)!important;text-shadow:0 0 20px var(--c-mag),0 0 40px var(--c-mag)!important}
+  .title-char:nth-child(4n+3){color:var(--c-green)!important;text-shadow:0 0 20px var(--c-green),0 0 40px var(--c-green)!important}
+  .title-char:nth-child(4n+4){color:var(--c-yellow)!important;text-shadow:0 0 20px var(--c-yellow),0 0 40px var(--c-yellow)!important}
   
   /* Smaller countdown timer on mobile - fully visible */
-  .countdown-wrapper{padding:0 10px;max-width:100vw;overflow:visible;margin:20px 0 30px}
-  .countdown{gap:10px!important;padding:0 5px;max-width:100%;justify-content:center;flex-wrap:wrap!important}
-  .time-unit{flex:0 0 auto;min-width:0;animation:pop-in 0.6s cubic-bezier(0.68,-0.55,0.265,1.55) backwards!important;margin-bottom:15px}
-  .digit-box{min-width:55px!important;padding:10px 12px!important;font-size:14px!important;border:3px solid #fff!important;box-shadow:0 6px 0 #cc0000,0 10px 15px rgba(0,0,0,.5),inset 0 -3px 0 rgba(0,0,0,.3),inset 0 3px 0 rgba(255,255,255,.3)!important;overflow:visible!important}
-  .digit-box span{font-size:18px!important}
-  .label{font-size:8px!important;margin-bottom:6px;opacity:1!important}
+  .countdown-wrapper{padding:0 10px;max-width:100vw;overflow:visible;margin:20px 0 50px!important}
+  .countdown{gap:8px!important;padding:0 5px;max-width:100%;justify-content:center;flex-wrap:wrap!important}
+  .time-unit{flex:0 0 auto;min-width:0;animation:pop-in 0.6s cubic-bezier(0.68,-0.55,0.265,1.55) backwards!important;margin-bottom:25px!important}
+  .digit-box{min-width:50px!important;padding:8px 10px!important;font-size:14px!important;border:3px solid #fff!important;box-shadow:0 6px 0 #cc0000,0 10px 15px rgba(0,0,0,.5),inset 0 -3px 0 rgba(0,0,0,.3),inset 0 3px 0 rgba(255,255,255,.3)!important;overflow:visible!important}
+  .digit-box span{font-size:16px!important}
+  .label{font-size:7px!important;margin-bottom:6px;opacity:1!important}
   
-  /* Fix button sizes */
-  .btn-register,.btn-primary{max-width:85vw!important;font-size:13px!important;padding:12px 16px!important;white-space:normal;text-align:center}
+  /* Fix button sizes - better styling */
+  .btn-register,.btn-primary{max-width:85vw!important;font-size:14px!important;padding:14px 24px!important;white-space:normal;text-align:center;border-radius:12px!important;font-weight:bold!important;letter-spacing:1px!important;box-shadow:0 0 20px rgba(0,255,255,.5),0 0 30px rgba(255,0,255,.3),0 4px 15px rgba(0,0,0,.3)!important}
   
-  /* Fix stats grid - make cards same size */
+  /* Fix stats grid - make cards equal size */
   .stats-grid{grid-template-columns:1fr!important;gap:12px;padding:0 15px;max-width:100vw}
-  .stat-card{max-width:100%;margin:0 auto;min-height:120px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+  .stat-card{max-width:100%;margin:0 auto;min-height:140px!important;height:140px!important;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px!important}
   
   /* Fix header */
   .site-header{padding:10px 12px!important;gap:8px}
-  .logo{font-size:9px!important;gap:5px}
+  .logo{font-size:11px!important;gap:5px}
+  .logo .pixel-icon{display:none!important}
   .logo-text{display:none!important}
+  .logo-text-mobile{display:inline!important;font-family:"Press Start 2P",monospace!important;letter-spacing:2px;color:var(--c-cyan);text-shadow:0 0 15px var(--c-cyan),0 0 25px var(--c-cyan)}
   .nav{gap:5px!important;flex-wrap:wrap;justify-content:flex-end}
   .nav a{font-size:9px!important;padding:5px 7px!important}
   .nav button{padding:5px 7px!important;font-size:12px!important}
@@ -412,16 +434,17 @@ body{cursor:none}
   #contact:before{animation:none!important;display:none!important}
   
   /* Fix tiles and cards - full width with padding */
-  .tiles{grid-template-columns:1fr!important;gap:12px;padding:0 15px;max-width:100vw}
+  .tiles{grid-template-columns:1fr!important;gap:12px;padding:0 15px;max-width:100vw;justify-items:center!important}
   .card{max-width:100%;margin:0 auto;width:100%}
-  /* Projects and Info tiles full width */
-  .tiles:not(.team) .card{width:calc(100vw - 30px)!important;max-width:calc(100vw - 30px)!important}
-  /* Default team avatars - crop from bottom to show top (head and upper body) */
-  .team-avatar{width:200px!important;height:220px!important;object-fit:cover!important;object-position:center 20%!important;margin:0 auto 15px!important}
-  /* Keerthana's image - show full body including legs */
-  .team-avatar-full{width:200px!important;height:280px!important;object-fit:cover!important;object-position:center center!important;margin:0 auto 15px!important}
-  .tiles.team .card{padding:20px!important}
-  .tiles.team .card h3{margin-top:10px!important}
+  /* Projects and Info tiles full width and centered */
+  .tiles:not(.team) .card{width:calc(100vw - 30px)!important;max-width:calc(100vw - 30px)!important;margin:0 auto!important;text-align:center}
+  /* Default team avatars - crop in half */
+  .team-avatar{width:200px!important;height:180px!important;object-fit:cover!important;object-position:center 15%!important;margin:0 auto 8px!important}
+  /* Keerthana's image - show full body */
+  .team-avatar-full{width:200px!important;height:280px!important;object-fit:cover!important;object-position:center center!important;margin:0 auto 8px!important}
+  .tiles.team .card{padding:15px!important}
+  .tiles.team .card h3{margin-top:5px!important;margin-bottom:3px!important}
+  .tiles.team .card p{margin-top:3px!important}
   
   /* Fix contact form and social links */
   .contact-grid{padding:0 10px;max-width:100vw;grid-template-columns:1fr!important}
