@@ -11,6 +11,11 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
+body,body *{cursor:none!important}
+*,*::before,*::after{cursor:none!important}
+a,button,input,textarea,select,option,.card,label{cursor:none!important}
+select::-ms-expand{cursor:none!important}
+select option,select option:hover,select option:checked{cursor:none!important}
 body{
   margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif; color:var(--fg);
   background:linear-gradient(180deg,var(--bg),var(--bg2));

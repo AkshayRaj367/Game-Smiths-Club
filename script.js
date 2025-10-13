@@ -245,21 +245,93 @@
   if(!isMobile){
   const customCursor = document.querySelector('.custom-cursor');
   
-  document.addEventListener('mousemove', (e) => {
+  // Initialize cursor position and ensure it's always on top
+  if(customCursor) {
+    // Create a dedicated overlay container for the cursor
+    let cursorOverlay = document.getElementById('cursor-overlay');
+    if(!cursorOverlay) {
+      cursorOverlay = document.createElement('div');
+      cursorOverlay.id = 'cursor-overlay';
+      cursorOverlay.style.cssText = 'position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;pointer-events:none!important;z-index:2147483647!important;overflow:visible!important;isolation:isolate!important;';
+      document.body.appendChild(cursorOverlay);
+    }
+    
+    // Move cursor into the overlay
+    cursorOverlay.appendChild(customCursor);
+    
+    // Set cursor styles
+    customCursor.style.cssText = 'position:fixed!important;width:32px!important;height:32px!important;pointer-events:none!important;z-index:2147483647!important;transform:rotate(-135deg)!important;opacity:1!important;visibility:visible!important;display:block!important;';
+    
+    // Continuously ensure cursor and overlay stay on top
+    setInterval(() => {
+      if(cursorOverlay) {
+        cursorOverlay.style.zIndex = '2147483647';
+        cursorOverlay.style.pointerEvents = 'none';
+        if(cursorOverlay.parentElement !== document.body) {
+          document.body.appendChild(cursorOverlay);
+        }
+      }
+      if(customCursor) {
+        customCursor.style.zIndex = '2147483647';
+        customCursor.style.opacity = '1';
+        customCursor.style.visibility = 'visible';
+        customCursor.style.display = 'block';
+      }
+    }, 50);
+  }
+  
+  // Update cursor position on mouse move
+  const updateCursorPosition = (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
     if(customCursor) {
-      customCursor.style.left = mouseX + 'px';
-      customCursor.style.top = mouseY + 'px';
+      // Center the cursor on mouse position (32px / 2 = 16px offset)
+      customCursor.style.left = (mouseX - 16) + 'px';
+      customCursor.style.top = (mouseY - 16) + 'px';
+    }
+  };
+  
+  document.addEventListener('mousemove', updateCursorPosition);
+  
+  // Initialize cursor at center of screen on load
+  window.addEventListener('load', () => {
+    if(customCursor) {
+      customCursor.style.left = (window.innerWidth / 2 - 16) + 'px';
+      customCursor.style.top = (window.innerHeight / 2 - 16) + 'px';
     }
   });
 
   // Hover effect on interactive elements
-  const interactiveElements = document.querySelectorAll('a, button, .card, input, textarea');
+  const interactiveElements = document.querySelectorAll('a, button, .card, input, textarea, select');
   interactiveElements.forEach(el => {
     el.addEventListener('mouseenter', () => customCursor?.classList.add('hover'));
     el.addEventListener('mouseleave', () => customCursor?.classList.remove('hover'));
+    // Force hide default cursor
+    el.style.cursor = 'none';
   });
+  
+  // Force hide cursor on all select dropdowns and their options
+  const selectElements = document.querySelectorAll('select');
+  selectElements.forEach(select => {
+    select.style.cursor = 'none';
+    select.addEventListener('mousedown', () => {
+      // Hide cursor when dropdown opens
+      document.body.style.cursor = 'none';
+    });
+    select.addEventListener('change', () => {
+      // Keep cursor hidden after selection
+      document.body.style.cursor = 'none';
+      select.style.cursor = 'none';
+    });
+  });
+  
+  // Observe for dynamically added elements
+  const observer = new MutationObserver(() => {
+    document.querySelectorAll('select, option').forEach(el => {
+      el.style.cursor = 'none';
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 
   // Ghosts follow cursor with delay
   const ghost1 = document.querySelector('.ghost-1');
@@ -673,18 +745,24 @@
     }
   });
 
-  // Animate social links on scroll
+  // Animate social links on scroll (both desktop and mobile)
   const socialLinks = document.querySelectorAll('.icon-link');
-  if(window.gsap && socialLinks.length > 0) {
+  if(window.gsap && window.ScrollTrigger && socialLinks.length > 0 && !isMobile) {
+    // Only animate on desktop, keep visible on mobile
     socialLinks.forEach((link, i) => {
-      gsap.from(link, {
-        opacity: 0,
-        x: 50,
+      // Set initial state for animation
+      gsap.set(link, {opacity: 0, x: 50});
+      
+      gsap.to(link, {
+        opacity: 1,
+        x: 0,
         duration: 0.6,
-        delay: i * 0.1,
+        delay: i * 0.15,
+        ease: 'back.out(1.7)',
         scrollTrigger: {
-          trigger: link,
-          start: 'top 90%'
+          trigger: link.closest('.social-container') || link,
+          start: 'top 85%',
+          once: true
         }
       });
     });
@@ -729,22 +807,83 @@
     }
   }
 
+  // Custom Select Dropdown Functionality
+  const customSelects = document.querySelectorAll('.custom-select');
+  customSelects.forEach(select => {
+    const selected = select.querySelector('.select-selected');
+    const items = select.querySelector('.select-items');
+    const options = items.querySelectorAll('div');
+    
+    // Toggle dropdown
+    selected.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeAllSelect(select);
+      select.classList.toggle('select-arrow-active');
+      items.classList.toggle('select-hide');
+    });
+    
+    // Select option
+    options.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selected.textContent = option.textContent;
+        select.dataset.value = option.dataset.value;
+        
+        // Remove previous selection
+        options.forEach(opt => opt.classList.remove('same-as-selected'));
+        option.classList.add('same-as-selected');
+        
+        // Close dropdown
+        select.classList.remove('select-arrow-active');
+        items.classList.add('select-hide');
+      });
+    });
+  });
+  
+  // Close all dropdowns when clicking outside
+  function closeAllSelect(except) {
+    customSelects.forEach(select => {
+      if(select !== except) {
+        select.classList.remove('select-arrow-active');
+        select.querySelector('.select-items').classList.add('select-hide');
+      }
+    });
+  }
+  
+  document.addEventListener('click', () => closeAllSelect());
+
   // Registration form submission
   registrationForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = registrationForm.querySelector('.btn-submit');
     const originalText = btn.innerHTML;
     
+    // Get custom select values
+    const branchSelect = registrationForm.querySelector('.custom-select[data-name="branch"]');
+    const yearSelect = registrationForm.querySelector('.custom-select[data-name="year"]');
+    const interestSelect = registrationForm.querySelector('.custom-select[data-name="interest"]');
+    
     const formData = {
-      name: registrationForm.name.value,
-      email: registrationForm.email.value,
-      phone: registrationForm.phone.value,
-      rollNumber: registrationForm.rollNumber.value,
-      branch: registrationForm.branch.value,
-      year: registrationForm.year.value,
-      section: registrationForm.section.value.toUpperCase(),
-      interest: registrationForm.interest.value
+      name: registrationForm.querySelector('input[name="name"]').value,
+      email: registrationForm.querySelector('input[name="email"]').value,
+      phone: registrationForm.querySelector('input[name="phone"]').value,
+      rollNumber: registrationForm.querySelector('input[name="rollNumber"]').value,
+      branch: branchSelect?.dataset.value || '',
+      year: yearSelect?.dataset.value || '',
+      section: registrationForm.querySelector('input[name="section"]').value.toUpperCase(),
+      interest: interestSelect?.dataset.value || ''
     };
+    
+    // Validation
+    if(!formData.branch || !formData.year || !formData.interest) {
+      btn.innerHTML = '<span>❌ Please fill all fields</span>';
+      btn.style.background = 'linear-gradient(90deg,#ff4444,#ff6666)';
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.style.background = '';
+      }, 2000);
+      return;
+    }
     
     btn.innerHTML = '<span>⏳ Registering...</span>';
     btn.disabled = true;

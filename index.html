@@ -133,26 +133,30 @@
         <div class="form-row">
           <label>
             <span>Branch</span>
-            <select name="branch" required>
-              <option value="">Select Branch</option>
-              <option value="CSE">Computer Science</option>
-              <option value="IT">Information Technology</option>
-              <option value="ECE">Electronics & Communication</option>
-              <option value="EEE">Electrical & Electronics</option>
-              <option value="MECH">Mechanical</option>
-              <option value="CIVIL">Civil</option>
-              <option value="OTHER">Other</option>
-            </select>
+            <div class="custom-select" data-name="branch" data-required="true">
+              <div class="select-selected">Select Branch</div>
+              <div class="select-items select-hide">
+                <div data-value="CSE">Computer Science</div>
+                <div data-value="IT">Information Technology</div>
+                <div data-value="ECE">Electronics & Communication</div>
+                <div data-value="EEE">Electrical & Electronics</div>
+                <div data-value="MECH">Mechanical</div>
+                <div data-value="CIVIL">Civil</div>
+                <div data-value="OTHER">Other</div>
+              </div>
+            </div>
           </label>
           <label>
             <span>Year</span>
-            <select name="year" required>
-              <option value="">Select Year</option>
-              <option value="1">1st Year</option>
-              <option value="2">2nd Year</option>
-              <option value="3">3rd Year</option>
-              <option value="4">4th Year</option>
-            </select>
+            <div class="custom-select" data-name="year" data-required="true">
+              <div class="select-selected">Select Year</div>
+              <div class="select-items select-hide">
+                <div data-value="1">1st Year</div>
+                <div data-value="2">2nd Year</div>
+                <div data-value="3">3rd Year</div>
+                <div data-value="4">4th Year</div>
+              </div>
+            </div>
           </label>
         </div>
         <div class="form-row">
@@ -162,15 +166,17 @@
           </label>
           <label>
             <span>Interest Area</span>
-            <select name="interest" required>
-              <option value="">Select Interest</option>
-              <option value="Game Development">Game Development</option>
-              <option value="Programming">Programming</option>
-              <option value="Art & Design">Art & Design</option>
-              <option value="Music & Sound">Music & Sound</option>
-              <option value="3D Modeling">3D Modeling</option>
-              <option value="Game Design">Game Design</option>
-            </select>
+            <div class="custom-select" data-name="interest" data-required="true">
+              <div class="select-selected">Select Interest</div>
+              <div class="select-items select-hide">
+                <div data-value="Game Development">Game Development</div>
+                <div data-value="Programming">Programming</div>
+                <div data-value="Art & Design">Art & Design</div>
+                <div data-value="Music & Sound">Music & Sound</div>
+                <div data-value="3D Modeling">3D Modeling</div>
+                <div data-value="Game Design">Game Design</div>
+              </div>
+            </div>
           </label>
         </div>
         <button type="submit" class="btn-submit">
@@ -388,7 +394,7 @@
         </label>
         <label>
           <span>🎯 Your Interest</span>
-          <select style="background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--fg);padding:14px;outline:none;font-family:inherit;">
+          <select style="background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--fg);padding:14px;outline:none;font-family:inherit;cursor:none!important;">
             <option>Game Development</option>
             <option>Art & Design</option>
             <option>Music & Sound</option>
