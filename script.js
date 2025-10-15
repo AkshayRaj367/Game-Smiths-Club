@@ -323,16 +323,24 @@
   // Fetch member count on page load
   fetchMemberCount();
 
-  // Trigger counter animation on scroll
+  // Trigger counter animation on scroll (desktop) or immediately (mobile)
   if(window.gsap && statNumbers.length > 0) {
-    statNumbers.forEach(stat => {
-      ScrollTrigger.create({
-        trigger: stat,
-        start: 'top 80%',
-        once: true,
-        onEnter: () => animateCounter(stat)
+    if(isMobile) {
+      // On mobile, animate immediately without waiting for scroll
+      statNumbers.forEach(stat => {
+        animateCounter(stat);
       });
-    });
+    } else {
+      // On desktop, use scroll trigger
+      statNumbers.forEach(stat => {
+        ScrollTrigger.create({
+          trigger: stat,
+          start: 'top 80%',
+          once: true,
+          onEnter: () => animateCounter(stat)
+        });
+      });
+    }
   }
 
   // Custom Cursor (disabled on mobile)
