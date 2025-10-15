@@ -25,23 +25,26 @@
   }
 
   const root = document.documentElement;
-  const modeBtn = document.getElementById('modeToggle');
   const musicBtn = document.getElementById('musicToggle');
   const bgm = document.getElementById('bgm');
 
-  // Night/Day mode toggle
-  modeBtn?.addEventListener('click',()=>{
-    if(root.classList.contains('day')){ 
-      root.classList.remove('day'); 
-      modeBtn.textContent='☼'; 
-    } else { 
-      root.classList.add('day'); 
-      modeBtn.textContent='☾'; 
-    }
-  });
+  // Autoplay music on page load
+  let musicOn = false;
+  if(bgm) {
+    bgm.volume = 0.25;
+    // Attempt to autoplay
+    bgm.play().then(() => {
+      musicOn = true;
+      if(musicBtn) musicBtn.textContent = '♫';
+    }).catch(() => {
+      // Autoplay was blocked, will require user interaction
+      console.log('Autoplay blocked. Click the music button to play.');
+      musicOn = false;
+      if(musicBtn) musicBtn.textContent = '♪';
+    });
+  }
 
   // Music toggle
-  let musicOn=false;
   musicBtn?.addEventListener('click',()=>{
     if(!bgm) return;
     musicOn = !musicOn;
@@ -324,6 +327,31 @@
     }, 16);
   };
 
+  // Fetch member count from database
+  async function fetchMemberCount(animate = false) {
+    try {
+      const response = await fetch('/api/members/count');
+      const data = await response.json();
+      if(data.success) {
+        const memberStatCard = document.getElementById('memberCount');
+        if(memberStatCard) {
+          memberStatCard.setAttribute('data-target', data.count);
+          memberStatCard.textContent = '0';
+          
+          // Animate counter if requested
+          if(animate) {
+            animateCounter(memberStatCard);
+          }
+        }
+      }
+    } catch(error) {
+      console.error('Error fetching member count:', error);
+    }
+  }
+
+  // Fetch count on page load
+  fetchMemberCount();
+
   // Use Intersection Observer for stat counters
   if(statNumbers.length > 0) {
     const observer = new IntersectionObserver((entries) => {
@@ -344,12 +372,12 @@
   if(!isMobile){
     const customCursor = document.querySelector('.custom-cursor');
     
-    // Use transform instead of left/top for better performance
+    // Use transform3d instead of left/top for better performance and prevent glitching
     const updateCursor = throttle((e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
       if(customCursor) {
-        customCursor.style.transform = `translate(${mouseX}px, ${mouseY}px) rotate(-135deg)`;
+        customCursor.style.transform = `translate3d(${mouseX - 16}px, ${mouseY - 16}px, 0) rotate(-135deg)`;
       }
     }, 16);
     
@@ -473,6 +501,52 @@
   // Games and forms - keep existing implementation
   // ... (rest of the code remains the same)
 
+  // Custom Select Dropdown Functionality for Contact Form
+  const contactCustomSelects = document.querySelectorAll('.contact-form .custom-select');
+  contactCustomSelects.forEach(select => {
+    const selected = select.querySelector('.select-selected');
+    const items = select.querySelector('.select-items');
+    const options = items.querySelectorAll('div');
+    
+    // Toggle dropdown
+    selected.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeAllContactSelect(select);
+      select.classList.toggle('select-arrow-active');
+      items.classList.toggle('select-hide');
+    });
+    
+    // Select option
+    options.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selected.textContent = option.textContent;
+        select.dataset.value = option.dataset.value;
+        
+        // Remove previous selection
+        options.forEach(opt => opt.classList.remove('same-as-selected'));
+        option.classList.add('same-as-selected');
+        
+        // Close dropdown
+        select.classList.remove('select-arrow-active');
+        items.classList.add('select-hide');
+      });
+    });
+  });
+  
+  // Close all dropdowns when clicking outside
+  function closeAllContactSelect(except) {
+    contactCustomSelects.forEach(select => {
+      if(select !== except) {
+        select.classList.remove('select-arrow-active');
+        const items = select.querySelector('.select-items');
+        if(items) items.classList.add('select-hide');
+      }
+    });
+  }
+  
+  document.addEventListener('click', () => closeAllContactSelect());
+
   // Contact form
   const contactForm = document.querySelector('.contact-form');
   contactForm?.addEventListener('submit', async (e) => {
@@ -480,14 +554,32 @@
     const btn = contactForm.querySelector('button');
     const originalText = btn.textContent;
     
+    // Get custom select values
+    const branchSelect = contactForm.querySelector('.custom-select[data-name="branch"]');
+    const interestSelect = contactForm.querySelector('.custom-select[data-name="interest"]');
+    
     const formData = {
-      name: contactForm.querySelector('input[type="text"]').value,
-      email: contactForm.querySelector('input[type="email"]').value,
-      interest: contactForm.querySelector('select').value,
-      message: contactForm.querySelector('textarea').value
+      name: contactForm.querySelector('input[name="name"]').value,
+      email: contactForm.querySelector('input[name="email"]').value,
+      phone: contactForm.querySelector('input[name="phone"]').value,
+      branch: branchSelect?.dataset.value || '',
+      section: contactForm.querySelector('input[name="section"]').value,
+      interest: interestSelect?.dataset.value || '',
+      message: contactForm.querySelector('textarea[name="message"]').value
     };
     
-    btn.textContent = '✨ Sending...';
+    // Validate required fields
+    if (!formData.name || !formData.email || !formData.phone || !formData.branch || !formData.section || !formData.interest) {
+      btn.textContent = 'Please fill all required fields';
+      btn.style.background = 'linear-gradient(90deg,#ff4444,#ff6666)';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+      }, 2000);
+      return;
+    }
+    
+    btn.textContent = 'Sending...';
     btn.style.background = 'linear-gradient(90deg,var(--c-green),var(--c-cyan))';
     btn.disabled = true;
     
@@ -501,7 +593,22 @@
       const data = await response.json();
       
       if(data.success) {
-        btn.textContent = '✅ Welcome to the Guild!';
+        btn.textContent = 'Welcome to the Guild!';
+        
+        // Update member count with animation
+        await fetchMemberCount(true);
+        
+        // Scroll to stats section smoothly
+        setTimeout(() => {
+          const statsSection = document.querySelector('.stats-section');
+          if(statsSection) {
+            statsSection.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center' 
+            });
+          }
+        }, 500);
+        
         setTimeout(() => {
           btn.textContent = originalText;
           btn.style.background = '';
@@ -509,7 +616,7 @@
           contactForm.reset();
         }, 3000);
       } else {
-        btn.textContent = '❌ ' + data.message;
+        btn.textContent = data.message;
         btn.style.background = 'linear-gradient(90deg,#ff4444,#ff6666)';
         setTimeout(() => {
           btn.textContent = originalText;
@@ -519,7 +626,7 @@
       }
     } catch (error) {
       console.error('Error:', error);
-      btn.textContent = '❌ Connection Error';
+      btn.textContent = 'Connection Error';
       btn.style.background = 'linear-gradient(90deg,#ff4444,#ff6666)';
       setTimeout(() => {
         btn.textContent = originalText;

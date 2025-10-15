@@ -1,43 +1,114 @@
+/**
+ * Game Smiths Club - Express Server
+ * 
+ * RESTful API server with MongoDB integration for member management
+ * Features:
+ * - Member registration and storage
+ * - Member count retrieval
+ * - Server-side rendering with EJS
+ * - CORS enabled for API access
+ * 
+ * @author Game Smiths Club Team
+ * @version 2.0.0
+ * @requires express
+ * @requires mongoose
+ * @requires cors
+ * @requires dotenv
+ */
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// ========================================
+// Middleware Configuration
+// ========================================
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
+app.use('/css', express.static(path.join(__dirname, 'public/css')));
+app.use('/js', express.static(path.join(__dirname, 'public/js')));
 
+// Set EJS as view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// ========================================
 // MongoDB Connection
+// ========================================
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://akshay:akshay@cluster0.hfehg.mongodb.net/gamesmithsclub?retryWrites=true&w=majority&appName=Cluster0';
 
-mongoose.connect(MONGODB_URI)
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 .then(() => console.log('✅ Connected to MongoDB'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  process.exit(1); // Exit if database connection fails
+});
 
-// Member Schema
+// ========================================
+// Database Schemas
+// ========================================
+
+/**
+ * Member Schema
+ * @typedef {Object} Member
+ * @property {String} name - Full name of the member
+ * @property {String} email - Email address (unique)
+ * @property {String} phone - 10-digit phone number
+ * @property {String} branch - Academic branch/department
+ * @property {String} section - Class section
+ * @property {String} interest - Primary area of interest
+ * @property {String} message - Optional message from member
+ * @property {Date} joinedAt - Registration timestamp
+ */
 const memberSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    trim: true
+    required: [true, 'Name is required'],
+    trim: true,
+    minlength: [2, 'Name must be at least 2 characters long']
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required'],
     trim: true,
-    lowercase: true
+    lowercase: true,
+    unique: true,
+    match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address']
+  },
+  phone: {
+    type: String,
+    required: [true, 'Phone number is required'],
+    trim: true,
+    match: [/^[0-9]{10}$/, 'Phone number must be 10 digits']
+  },
+  branch: {
+    type: String,
+    required: [true, 'Branch is required'],
+    trim: true
+  },
+  section: {
+    type: String,
+    required: [true, 'Section is required'],
+    trim: true,
+    uppercase: true
   },
   interest: {
     type: String,
-    required: true
+    required: [true, 'Interest area is required']
   },
   message: {
     type: String,
-    trim: true
+    trim: true,
+    maxlength: [500, 'Message cannot exceed 500 characters']
   },
   joinedAt: {
     type: Date,
@@ -96,20 +167,55 @@ const registrationSchema = new mongoose.Schema({
 
 const Registration = mongoose.model('Registration', registrationSchema);
 
-// API Routes
+// ============================================================================
+// API ROUTES
+// ============================================================================
+
+/**
+ * @route POST /api/join
+ * @desc Submit join guild form
+ * @access Public
+ * @body {Object} Member data - { name, email, phone, branch, section, interest, message }
+ * @returns {Object} Response - { success: boolean, message: string, data?: Member }
+ * @example
+ * // Request Body:
+ * {
+ *   "name": "John Doe",
+ *   "email": "john@example.com",
+ *   "phone": "1234567890",
+ *   "branch": "CSE",
+ *   "section": "A",
+ *   "interest": "Game Development",
+ *   "message": "Excited to join!"
+ * }
+ * // Success Response (201):
+ * {
+ *   "success": true,
+ *   "message": "Welcome to Game Smiths Club!",
+ *   "data": { ...memberObject }
+ * }
+ */
 app.post('/api/join', async (req, res) => {
   try {
-    const { name, email, interest, message } = req.body;
+    const { name, email, phone, branch, section, interest, message } = req.body;
 
-    // Validate input
-    if (!name || !email || !interest) {
+    // Validate required fields
+    if (!name || !email || !phone || !branch || !section || !interest) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Name, email, and interest are required' 
+        message: 'Name, email, phone, branch, section, and interest are required' 
       });
     }
 
-    // Check if email already exists
+    // Validate phone number format (10 digits)
+    if (!/^[0-9]{10}$/.test(phone)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Please enter a valid 10-digit phone number' 
+      });
+    }
+
+    // Check for duplicate email
     const existingMember = await Member.findOne({ email });
     if (existingMember) {
       return res.status(400).json({ 
@@ -118,10 +224,13 @@ app.post('/api/join', async (req, res) => {
       });
     }
 
-    // Create new member
+    // Create and save new member
     const newMember = new Member({
       name,
       email,
+      phone,
+      branch,
+      section: section.toUpperCase(),
       interest,
       message
     });
@@ -130,7 +239,7 @@ app.post('/api/join', async (req, res) => {
 
     res.status(201).json({ 
       success: true, 
-      message: 'Welcome to Game Smiths Club! 🎮',
+      message: 'Welcome to Game Smiths Club!',
       data: newMember
     });
 
@@ -143,32 +252,91 @@ app.post('/api/join', async (req, res) => {
   }
 });
 
-// Get all members (optional - for admin view)
+/**
+ * @route GET /api/members
+ * @desc Get all members (sorted by join date, newest first)
+ * @access Public
+ * @returns {Object} Response - { success: boolean, count: number, data: Member[] }
+ * @example
+ * // Success Response (200):
+ * {
+ *   "success": true,
+ *   "count": 42,
+ *   "data": [ {...member1}, {...member2}, ... ]
+ * }
+ */
 app.get('/api/members', async (req, res) => {
   try {
     const members = await Member.find().sort({ joinedAt: -1 });
-    res.json({ success: true, count: members.length, data: members });
+    res.json({ 
+      success: true, 
+      count: members.length, 
+      data: members 
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error fetching members' });
+    console.error('Error fetching members:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching members' 
+    });
   }
 });
 
-// Get member count
+/**
+ * @route GET /api/members/count
+ * @desc Get total member count
+ * @access Public
+ * @returns {Object} Response - { success: boolean, count: number }
+ * @example
+ * // Success Response (200):
+ * {
+ *   "success": true,
+ *   "count": 42
+ * }
+ */
 app.get('/api/members/count', async (req, res) => {
   try {
     const count = await Member.countDocuments();
     res.json({ success: true, count });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error counting members' });
+    console.error('Error counting members:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error counting members' 
+    });
   }
 });
 
-// Registration Routes
+/**
+ * @route POST /api/register
+ * @desc Submit registration form with roll number
+ * @access Public
+ * @body {Object} Registration data - { name, email, phone, rollNumber, branch, year, section, interest }
+ * @returns {Object} Response - { success: boolean, message: string, data?: Registration }
+ * @example
+ * // Request Body:
+ * {
+ *   "name": "Jane Smith",
+ *   "email": "jane@example.com",
+ *   "phone": "9876543210",
+ *   "rollNumber": "21BCE1234",
+ *   "branch": "CSE",
+ *   "year": "2nd Year",
+ *   "section": "A",
+ *   "interest": "Game Design"
+ * }
+ * // Success Response (201):
+ * {
+ *   "success": true,
+ *   "message": "Registration successful! Welcome to Game Smiths Club! 🎮",
+ *   "data": { ...registrationObject }
+ * }
+ */
 app.post('/api/register', async (req, res) => {
   try {
     const { name, email, phone, rollNumber, branch, year, section, interest } = req.body;
 
-    // Validate input
+    // Validate all required fields
     if (!name || !email || !phone || !rollNumber || !branch || !year || !section || !interest) {
       return res.status(400).json({ 
         success: false, 
@@ -176,7 +344,7 @@ app.post('/api/register', async (req, res) => {
       });
     }
 
-    // Check if email already registered
+    // Check for duplicate email
     const existingEmail = await Registration.findOne({ email });
     if (existingEmail) {
       return res.status(400).json({ 
@@ -185,7 +353,7 @@ app.post('/api/register', async (req, res) => {
       });
     }
 
-    // Check if roll number already registered
+    // Check for duplicate roll number
     const existingRoll = await Registration.findOne({ rollNumber: rollNumber.toUpperCase() });
     if (existingRoll) {
       return res.status(400).json({ 
@@ -194,7 +362,7 @@ app.post('/api/register', async (req, res) => {
       });
     }
 
-    // Create new registration
+    // Create and save new registration
     const newRegistration = new Registration({
       name,
       email,
@@ -223,30 +391,62 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Get all registrations (optional - for admin view)
+/**
+ * @route GET /api/registrations
+ * @desc Get all registrations (sorted by registration date, newest first)
+ * @access Public
+ * @returns {Object} Response - { success: boolean, count: number, data: Registration[] }
+ */
 app.get('/api/registrations', async (req, res) => {
   try {
     const registrations = await Registration.find().sort({ registeredAt: -1 });
-    res.json({ success: true, count: registrations.length, data: registrations });
+    res.json({ 
+      success: true, 
+      count: registrations.length, 
+      data: registrations 
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error fetching registrations' });
+    console.error('Error fetching registrations:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching registrations' 
+    });
   }
 });
 
-// Get registration count
+/**
+ * @route GET /api/registrations/count
+ * @desc Get total registration count
+ * @access Public
+ * @returns {Object} Response - { success: boolean, count: number }
+ */
 app.get('/api/registrations/count', async (req, res) => {
   try {
     const count = await Registration.countDocuments();
     res.json({ success: true, count });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error counting registrations' });
+    console.error('Error counting registrations:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error counting registrations' 
+    });
   }
 });
 
-// Serve index.html for root route
+// ============================================================================
+// STATIC FILE SERVING
+// ============================================================================
+
+/**
+ * Serve index.html for root route
+ */
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
+
+// ============================================================================
+// SERVER INITIALIZATION
+// ============================================================================
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

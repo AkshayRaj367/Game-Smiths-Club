@@ -1,21 +1,68 @@
-/* Game Smiths Club - Interactivity & Animations */
+/**
+ * Game Smiths Club - Main JavaScript
+ * 
+ * Handles all client-side interactivity including:
+ * - Mobile/desktop detection and optimization
+ * - Custom cursor and ghost followers
+ * - Music toggle and autoplay
+ * - Countdown timer
+ * - Parallax scrolling
+ * - Mini games (Snake, Pong)
+ * - Form validation and submission
+ * - Member count fetching
+ * - Touch controls for mobile games
+ * 
+ * @author Game Smiths Club Team
+ * @version 2.0.0
+ */
 (function(){
-  // Detect mobile/touch devices
-  const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  /**
+   * Detects if the current device is mobile or touch-enabled
+   * Checks multiple conditions for comprehensive mobile detection
+   * @constant {boolean}
+   */
+  const isMobile = ('ontouchstart' in window) || 
+                   (navigator.maxTouchPoints > 0) || 
+                   (navigator.msMaxTouchPoints > 0) ||
+                   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   
+  // If mobile, enable default cursor immediately and hide custom cursor
+  if(isMobile) {
+    document.documentElement.style.cursor = 'auto';
+    document.body.style.cursor = 'auto';
+    const customCursor = document.querySelector('.custom-cursor');
+    if(customCursor) customCursor.style.display = 'none';
+  }
+  
+  // DOM element references
   const root = document.documentElement;
-  const modeBtn = document.getElementById('modeToggle');
   const musicBtn = document.getElementById('musicToggle');
   const bgm = document.getElementById('bgm');
 
-  // Night/Day mode toggle
-  modeBtn?.addEventListener('click',()=>{
-    if(root.classList.contains('day')){ root.classList.remove('day'); modeBtn.textContent='☼'; }
-    else { root.classList.add('day'); modeBtn.textContent='☾'; }
-  });
+  /**
+   * Initializes and handles background music autoplay
+   * Attempts to autoplay on page load, falls back to manual play if blocked
+   * @type {boolean} musicOn - Current music playback state
+   */
+  let musicOn = false;
+  if(bgm) {
+    bgm.volume = 0.25;
+    // Attempt to autoplay music on page load
+    bgm.play().then(() => {
+      musicOn = true;
+      if(musicBtn) musicBtn.textContent = '♫';
+    }).catch(() => {
+      // Autoplay was blocked by browser policy, requires user interaction
+      console.log('Autoplay blocked. Click the music button to play.');
+      musicOn = false;
+      if(musicBtn) musicBtn.textContent = '♪';
+    });
+  }
 
-  // Music toggle (requires a valid audio src)
-  let musicOn=false;
+  /**
+   * Music toggle button event handler
+   * Toggles between play and pause states
+   */
   musicBtn?.addEventListener('click',()=>{
     if(!bgm) return;
     musicOn = !musicOn;
@@ -23,13 +70,20 @@
     if(musicOn){ bgm.volume=0.25; bgm.play().catch(()=>{}); } else { bgm.pause(); }
   });
 
-  // Countdown to October 17
+  /**
+   * Countdown Timer to October 17
+   * Displays days, hours, minutes, and seconds remaining
+   */
   const cdEl = document.querySelector('.countdown');
   const dEl = cdEl?.querySelector('.days');
   const hEl = cdEl?.querySelector('.hours');
   const mEl = cdEl?.querySelector('.minutes');
   const sEl = cdEl?.querySelector('.seconds');
 
+  /**
+   * Calculates the next October 17 date
+   * @returns {Date} Next occurrence of October 17
+   */
   function nextOct17(){
     const now = new Date();
     const year = now.getMonth()>9 || (now.getMonth()===9 && now.getDate()>17) ? now.getFullYear()+1 : now.getFullYear();
@@ -38,11 +92,18 @@
   }
 
   const target = nextOct17();
+  
+  /**
+   * Updates countdown display every second
+   * Shows "The Club is Live" message when countdown reaches zero
+   */
   function tick(){
     const now = new Date();
     let diff = target - now;
     if(diff <= 0){
-      if(cdEl) cdEl.textContent = 'Launched!';
+      if(cdEl) {
+        cdEl.innerHTML = '<div style="font-size: 32px; font-weight: bold; color: var(--c-cyan); text-shadow: 0 0 20px var(--c-cyan), 0 0 40px var(--c-mag); animation: pulse 1.5s ease-in-out infinite;"> The Club is Live 🤩!!!! </div>';
+      }
       return;
     }
     const d = Math.floor(diff/86400000);
@@ -59,7 +120,11 @@
   }
   setInterval(tick,1000); tick();
 
-  // Title Pixel Explosion Effect - disabled on mobile for performance
+  /**
+   * Title Pixel Explosion Effect
+   * Creates animated pixel particles when title is clicked
+   * Disabled on mobile for performance
+   */
   const heroTitle = document.querySelector('.hero .title');
   let isExploded = false;
   let reappearTimer = null;
@@ -67,16 +132,15 @@
   if(!isMobile) {
     heroTitle?.addEventListener('click', function() {
       if (isExploded) {
-        // Reappear
+        // Reappear animation
         this.classList.remove('exploded');
         isExploded = false;
         if(reappearTimer) clearTimeout(reappearTimer);
       } else {
-        // Explode
+        // Explode animation: create 50 colored pixels
         const rect = this.getBoundingClientRect();
         const colors = ['#00ffff', '#ff00ff', '#00ff99', '#ffe066', '#00aaff'];
         
-        // Create pixels
         for (let i = 0; i < 50; i++) {
           const pixel = document.createElement('div');
           pixel.className = 'explosion-pixel';
@@ -84,6 +148,7 @@
           pixel.style.top = rect.top + rect.height / 2 + 'px';
           pixel.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
           
+          // Calculate random explosion vector
           const angle = Math.random() * Math.PI * 2;
           const velocity = 100 + Math.random() * 200;
           const vx = Math.cos(angle) * velocity;
@@ -94,7 +159,7 @@
           
           document.body.appendChild(pixel);
           
-          // Remove pixel after animation
+          // Remove pixel after animation completes
           setTimeout(() => pixel.remove(), 1000);
         }
         
@@ -227,6 +292,37 @@
     }, 16);
   };
 
+  /**
+   * Fetches the current member count from the MongoDB database
+   * Updates the member count stat card with real-time data
+   * @async
+   * @param {boolean} animate - Whether to animate the counter (default: false)
+   * @returns {Promise<void>}
+   */
+  async function fetchMemberCount(animate = false) {
+    try {
+      const response = await fetch('/api/members/count');
+      const data = await response.json();
+      if(data.success) {
+        const memberStatCard = document.getElementById('memberCount');
+        if(memberStatCard) {
+          memberStatCard.setAttribute('data-target', data.count);
+          memberStatCard.textContent = '0';
+          
+          // Animate counter if requested
+          if(animate) {
+            animateCounter(memberStatCard);
+          }
+        }
+      }
+    } catch(error) {
+      console.error('Error fetching member count:', error);
+    }
+  }
+
+  // Fetch member count on page load
+  fetchMemberCount();
+
   // Trigger counter animation on scroll
   if(window.gsap && statNumbers.length > 0) {
     statNumbers.forEach(stat => {
@@ -240,7 +336,8 @@
   }
 
   // Custom Cursor (disabled on mobile)
-  let mouseX = 0, mouseY = 0;
+  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  let customCursorInitialized = false;
   
   if(!isMobile){
   const customCursor = document.querySelector('.custom-cursor');
@@ -260,7 +357,11 @@
     cursorOverlay.appendChild(customCursor);
     
     // Set cursor styles
-    customCursor.style.cssText = 'position:fixed!important;width:32px!important;height:32px!important;pointer-events:none!important;z-index:2147483647!important;transform:rotate(-135deg)!important;opacity:1!important;visibility:visible!important;display:block!important;';
+    customCursor.style.cssText = 'position:fixed!important;width:32px!important;height:32px!important;pointer-events:none!important;z-index:2147483647!important;opacity:1!important;visibility:visible!important;display:block!important;left:0!important;top:0!important;';
+    
+    // Initialize cursor at center immediately
+    customCursor.style.transform = `translate3d(${mouseX - 16}px, ${mouseY - 16}px, 0) rotate(-135deg)`;
+    customCursorInitialized = true;
     
     // Continuously ensure cursor and overlay stay on top
     setInterval(() => {
@@ -285,21 +386,36 @@
     mouseX = e.clientX;
     mouseY = e.clientY;
     if(customCursor) {
-      // Center the cursor on mouse position (32px / 2 = 16px offset)
-      customCursor.style.left = (mouseX - 16) + 'px';
-      customCursor.style.top = (mouseY - 16) + 'px';
+      // Use transform for better performance and prevent glitching
+      customCursor.style.transform = `translate3d(${mouseX - 16}px, ${mouseY - 16}px, 0) rotate(-135deg)`;
     }
   };
   
+  // Use multiple event listeners for better browser compatibility
   document.addEventListener('mousemove', updateCursorPosition);
+  document.addEventListener('mouseenter', updateCursorPosition);
   
-  // Initialize cursor at center of screen on load
-  window.addEventListener('load', () => {
-    if(customCursor) {
-      customCursor.style.left = (window.innerWidth / 2 - 16) + 'px';
-      customCursor.style.top = (window.innerHeight / 2 - 16) + 'px';
+  // Also track on window for better coverage
+  window.addEventListener('mousemove', updateCursorPosition);
+  
+  // Fallback: Show default cursor if custom cursor fails to initialize or move
+  let cursorMoveDetected = false;
+  const cursorFailsafeCheck = setTimeout(() => {
+    if(!cursorMoveDetected && customCursor) {
+      // If no mouse movement detected after 3 seconds, show default cursor as fallback
+      console.warn('Custom cursor may not be working properly, enabling fallback');
+      document.documentElement.style.setProperty('cursor', 'auto', 'important');
+      document.body.style.setProperty('cursor', 'auto', 'important');
     }
-  });
+  }, 3000);
+  
+  // Detect any cursor movement
+  const detectCursorMovement = () => {
+    cursorMoveDetected = true;
+    clearTimeout(cursorFailsafeCheck);
+    document.removeEventListener('mousemove', detectCursorMovement);
+  };
+  document.addEventListener('mousemove', detectCursorMovement);
 
   // Hover effect on interactive elements
   const interactiveElements = document.querySelectorAll('a, button, .card, input, textarea, select');
@@ -445,7 +561,11 @@
   updateCharacters();
   }
 
-  // Snake Game
+  /**
+   * Snake Game Implementation
+   * Classic snake game with keyboard and mobile controls
+   * @namespace SnakeGame
+   */
   const snakeCanvas = document.getElementById('snakeGame');
   const snakeCtx = snakeCanvas?.getContext('2d');
   const snakeStartBtn = document.getElementById('snakeStart');
@@ -454,6 +574,12 @@
   let snakeGame = null;
   let snakeRunning = false;
 
+  /**
+   * Initializes the Snake game
+   * Sets up game grid, snake, food, and event listeners
+   * @function initSnake
+   * @returns {Function} Cleanup function to remove event listeners
+   */
   function initSnake() {
     if(!snakeCanvas || !snakeCtx) return;
     
@@ -590,7 +716,11 @@
     });
   }
 
-  // Pong Game
+  /**
+   * Pong Game Implementation
+   * Classic pong game with keyboard controls (desktop) and touch controls (mobile)
+   * @namespace PongGame
+   */
   const pongCanvas = document.getElementById('pongGame');
   const pongCtx = pongCanvas?.getContext('2d');
   const pongStartBtn = document.getElementById('pongStart');
@@ -598,26 +728,119 @@
   
   let pongRunning = false;
 
+  /**
+   * Initializes the Pong game
+   * Sets up paddle, ball, physics, and controls
+   * Includes touch controls for mobile devices
+   * @function initPong
+   */
   function initPong() {
     if(!pongCanvas || !pongCtx) return;
     
     let paddleY = pongCanvas.height / 2 - 40;
     let ballX = pongCanvas.width / 2;
     let ballY = pongCanvas.height / 2;
-    let ballDX = 4;
-    let ballDY = 4;
+    let ballDX = 2.5;
+    let ballDY = 2.5;
     let score = 0;
-
-    pongCanvas.addEventListener('mousemove', (e) => {
+    
+    // Keyboard controls
+    const keys = {};
+    const paddleSpeed = 4;
+    
+    // Touch/Scroll controls for mobile
+    let touchStartY = 0;
+    let lastTouchY = 0;
+    
+    function handleTouchStart(e) {
+      if(!isMobile) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const touch = e.touches[0];
       const rect = pongCanvas.getBoundingClientRect();
-      paddleY = e.clientY - rect.top - 40;
-    });
+      touchStartY = touch.clientY - rect.top;
+      lastTouchY = touch.clientY;
+      
+      // Directly set paddle position based on touch
+      paddleY = touchStartY - 40; // Center paddle on touch (80/2 = 40)
+      paddleY = Math.max(0, Math.min(paddleY, pongCanvas.height - 80));
+    }
+    
+    function handleTouchMove(e) {
+      if(!isMobile) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const touch = e.touches[0];
+      const rect = pongCanvas.getBoundingClientRect();
+      const touchY = touch.clientY - rect.top;
+      
+      // Move paddle to follow touch position directly
+      paddleY = touchY - 40; // Center paddle on touch (80/2 = 40)
+      paddleY = Math.max(0, Math.min(paddleY, pongCanvas.height - 80));
+      
+      lastTouchY = touch.clientY;
+    }
+    
+    function handleTouchEnd(e) {
+      if(!isMobile) return;
+      e.preventDefault();
+      e.stopPropagation();
+      touchStartY = 0;
+      lastTouchY = 0;
+    }
+    
+    function handleKeyDown(e) {
+      if(['ArrowUp', 'ArrowDown', 'w', 'W', 's', 'S'].includes(e.key)) {
+        e.preventDefault();
+        keys[e.key.toLowerCase()] = true;
+      }
+    }
+    
+    function handleKeyUp(e) {
+      keys[e.key.toLowerCase()] = false;
+    }
+    
+    // Add event listeners
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+    
+    if(isMobile && pongCanvas) {
+      // Use { passive: false } to allow preventDefault()
+      pongCanvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+      pongCanvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+      pongCanvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+      
+      // Also prevent default on the canvas itself
+      pongCanvas.style.touchAction = 'none';
+    }
 
     function gameLoop() {
-      if(!pongRunning) return;
+      if(!pongRunning) {
+        document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('keyup', handleKeyUp);
+        if(isMobile && pongCanvas) {
+          pongCanvas.removeEventListener('touchstart', handleTouchStart);
+          pongCanvas.removeEventListener('touchmove', handleTouchMove);
+          pongCanvas.removeEventListener('touchend', handleTouchEnd);
+        }
+        return;
+      }
 
       pongCtx.fillStyle = '#000';
       pongCtx.fillRect(0, 0, pongCanvas.width, pongCanvas.height);
+      
+      // Move paddle with keyboard (desktop only)
+      if(!isMobile) {
+        if(keys['arrowup'] || keys['w']) {
+          paddleY -= paddleSpeed;
+        }
+        if(keys['arrowdown'] || keys['s']) {
+          paddleY += paddleSpeed;
+        }
+        
+        // Keep paddle within bounds
+        paddleY = Math.max(0, Math.min(paddleY, pongCanvas.height - 80));
+      }
 
       // Draw paddle
       pongCtx.fillStyle = '#00ffff';
@@ -650,6 +873,8 @@
         pongCtx.textAlign = 'center';
         pongCtx.fillText('GAME OVER', pongCanvas.width/2, pongCanvas.height/2);
         if(pongStartBtn) pongStartBtn.textContent = 'Restart';
+        document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('keyup', handleKeyUp);
         return;
       }
 
@@ -681,22 +906,86 @@
     });
   });
 
+  // Custom Select Dropdown Functionality for Contact Form
+  const contactCustomSelects = document.querySelectorAll('.contact-form .custom-select');
+  contactCustomSelects.forEach(select => {
+    const selected = select.querySelector('.select-selected');
+    const items = select.querySelector('.select-items');
+    const options = items.querySelectorAll('div');
+    
+    // Toggle dropdown
+    selected.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeAllContactSelect(select);
+      select.classList.toggle('select-arrow-active');
+      items.classList.toggle('select-hide');
+    });
+    
+    // Select option
+    options.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selected.textContent = option.textContent;
+        select.dataset.value = option.dataset.value;
+        
+        // Remove previous selection
+        options.forEach(opt => opt.classList.remove('same-as-selected'));
+        option.classList.add('same-as-selected');
+        
+        // Close dropdown
+        select.classList.remove('select-arrow-active');
+        items.classList.add('select-hide');
+      });
+    });
+  });
+  
+  // Close all dropdowns when clicking outside
+  function closeAllContactSelect(except) {
+    contactCustomSelects.forEach(select => {
+      if(select !== except) {
+        select.classList.remove('select-arrow-active');
+        const items = select.querySelector('.select-items');
+        if(items) items.classList.add('select-hide');
+      }
+    });
+  }
+  
+  document.addEventListener('click', () => closeAllContactSelect());
+
   // Form submission with MongoDB
   contactForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = contactForm.querySelector('button');
     const originalText = btn.textContent;
     
+    // Get custom select values
+    const branchSelect = contactForm.querySelector('.custom-select[data-name="branch"]');
+    const interestSelect = contactForm.querySelector('.custom-select[data-name="interest"]');
+    
     // Get form data
     const formData = {
-      name: contactForm.querySelector('input[type="text"]').value,
-      email: contactForm.querySelector('input[type="email"]').value,
-      interest: contactForm.querySelector('select').value,
-      message: contactForm.querySelector('textarea').value
+      name: contactForm.querySelector('input[name="name"]').value,
+      email: contactForm.querySelector('input[name="email"]').value,
+      phone: contactForm.querySelector('input[name="phone"]').value,
+      branch: branchSelect?.dataset.value || '',
+      section: contactForm.querySelector('input[name="section"]').value,
+      interest: interestSelect?.dataset.value || '',
+      message: contactForm.querySelector('textarea[name="message"]').value
     };
     
+    // Validate required fields
+    if (!formData.name || !formData.email || !formData.phone || !formData.branch || !formData.section || !formData.interest) {
+      btn.textContent = 'Please fill all required fields';
+      btn.style.background = 'linear-gradient(90deg,#ff4444,#ff6666)';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+      }, 2000);
+      return;
+    }
+    
     // Update button state
-    btn.textContent = '✨ Sending...';
+    btn.textContent = 'Sending...';
     btn.style.background = 'linear-gradient(90deg,var(--c-green),var(--c-cyan))';
     btn.disabled = true;
     
@@ -713,8 +1002,22 @@
       const data = await response.json();
       
       if(data.success) {
-        btn.textContent = '✅ Welcome to the Guild!';
+        btn.textContent = 'Welcome to the Guild!';
         btn.style.background = 'linear-gradient(90deg,var(--c-green),var(--c-cyan))';
+        
+        // Update member count with animation
+        await fetchMemberCount(true);
+        
+        // Scroll to stats section smoothly
+        setTimeout(() => {
+          const statsSection = document.querySelector('.stats-section');
+          if(statsSection) {
+            statsSection.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center' 
+            });
+          }
+        }, 500);
         
         setTimeout(() => {
           btn.textContent = originalText;
@@ -723,7 +1026,7 @@
           contactForm.reset();
         }, 3000);
       } else {
-        btn.textContent = '❌ ' + data.message;
+        btn.textContent = data.message;
         btn.style.background = 'linear-gradient(90deg,#ff4444,#ff6666)';
         
         setTimeout(() => {
@@ -767,173 +1070,5 @@
       });
     });
   }
-
-  // Registration Modal
-  const registerBtn = document.getElementById('registerBtn');
-  const modal = document.getElementById('registrationModal');
-  const closeModal = document.getElementById('closeModal');
-  const registrationForm = document.getElementById('registrationForm');
-  const registeredCountEl = document.getElementById('registeredCount');
-
-  // Open modal
-  registerBtn?.addEventListener('click', () => {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  });
-
-  // Close modal
-  closeModal?.addEventListener('click', () => {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-  });
-
-  // Close on overlay click
-  modal?.querySelector('.modal-overlay')?.addEventListener('click', () => {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-  });
-
-  // Fetch registered count
-  async function fetchRegisteredCount() {
-    try {
-      const response = await fetch('/api/registrations/count');
-      const data = await response.json();
-      if(data.success && registeredCountEl) {
-        registeredCountEl.setAttribute('data-target', data.count);
-        animateCounter(registeredCountEl);
-      }
-    } catch(error) {
-      console.error('Error fetching count:', error);
-    }
-  }
-
-  // Custom Select Dropdown Functionality
-  const customSelects = document.querySelectorAll('.custom-select');
-  customSelects.forEach(select => {
-    const selected = select.querySelector('.select-selected');
-    const items = select.querySelector('.select-items');
-    const options = items.querySelectorAll('div');
-    
-    // Toggle dropdown
-    selected.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeAllSelect(select);
-      select.classList.toggle('select-arrow-active');
-      items.classList.toggle('select-hide');
-    });
-    
-    // Select option
-    options.forEach(option => {
-      option.addEventListener('click', (e) => {
-        e.stopPropagation();
-        selected.textContent = option.textContent;
-        select.dataset.value = option.dataset.value;
-        
-        // Remove previous selection
-        options.forEach(opt => opt.classList.remove('same-as-selected'));
-        option.classList.add('same-as-selected');
-        
-        // Close dropdown
-        select.classList.remove('select-arrow-active');
-        items.classList.add('select-hide');
-      });
-    });
-  });
-  
-  // Close all dropdowns when clicking outside
-  function closeAllSelect(except) {
-    customSelects.forEach(select => {
-      if(select !== except) {
-        select.classList.remove('select-arrow-active');
-        select.querySelector('.select-items').classList.add('select-hide');
-      }
-    });
-  }
-  
-  document.addEventListener('click', () => closeAllSelect());
-
-  // Registration form submission
-  registrationForm?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = registrationForm.querySelector('.btn-submit');
-    const originalText = btn.innerHTML;
-    
-    // Get custom select values
-    const branchSelect = registrationForm.querySelector('.custom-select[data-name="branch"]');
-    const yearSelect = registrationForm.querySelector('.custom-select[data-name="year"]');
-    const interestSelect = registrationForm.querySelector('.custom-select[data-name="interest"]');
-    
-    const formData = {
-      name: registrationForm.querySelector('input[name="name"]').value,
-      email: registrationForm.querySelector('input[name="email"]').value,
-      phone: registrationForm.querySelector('input[name="phone"]').value,
-      rollNumber: registrationForm.querySelector('input[name="rollNumber"]').value,
-      branch: branchSelect?.dataset.value || '',
-      year: yearSelect?.dataset.value || '',
-      section: registrationForm.querySelector('input[name="section"]').value.toUpperCase(),
-      interest: interestSelect?.dataset.value || ''
-    };
-    
-    // Validation
-    if(!formData.branch || !formData.year || !formData.interest) {
-      btn.innerHTML = '<span>❌ Please fill all fields</span>';
-      btn.style.background = 'linear-gradient(90deg,#ff4444,#ff6666)';
-      setTimeout(() => {
-        btn.innerHTML = originalText;
-        btn.style.background = '';
-      }, 2000);
-      return;
-    }
-    
-    btn.innerHTML = '<span>⏳ Registering...</span>';
-    btn.disabled = true;
-    
-    try {
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(formData)
-      });
-      
-      const data = await response.json();
-      
-      if(data.success) {
-        btn.innerHTML = '<span>✅ Registration Successful!</span>';
-        btn.style.background = 'linear-gradient(90deg,var(--c-green),var(--c-cyan))';
-        
-        setTimeout(() => {
-          modal.classList.remove('active');
-          document.body.style.overflow = '';
-          registrationForm.reset();
-          btn.innerHTML = originalText;
-          btn.style.background = '';
-          btn.disabled = false;
-          fetchRegisteredCount();
-        }, 2000);
-      } else {
-        btn.innerHTML = '<span>❌ ' + data.message + '</span>';
-        btn.style.background = 'linear-gradient(90deg,#ff4444,#ff6666)';
-        
-        setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.style.background = '';
-          btn.disabled = false;
-        }, 3000);
-      }
-    } catch(error) {
-      console.error('Error:', error);
-      btn.innerHTML = '<span>❌ Connection Error</span>';
-      btn.style.background = 'linear-gradient(90deg,#ff4444,#ff6666)';
-      
-      setTimeout(() => {
-        btn.innerHTML = originalText;
-        btn.style.background = '';
-        btn.disabled = false;
-      }, 3000);
-    }
-  });
-
-  // Fetch count on page load
-  fetchRegisteredCount();
 
 })();

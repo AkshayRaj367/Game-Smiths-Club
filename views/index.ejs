@@ -29,17 +29,8 @@
       <div class="layer mountains" data-depth="0.25"></div>
       <div class="layer ground" data-depth="0.5"></div>
       <div class="layer dino-run" data-depth="0.6" aria-hidden="true">
-        <svg class="dino" viewBox="0 0 48 40" width="96" height="80" role="img" aria-label="Running pixel dino">
-          <rect x="10" y="14" width="12" height="10" />
-          <rect x="22" y="10" width="8" height="10" />
-          <rect x="30" y="12" width="6" height="12" />
-          <rect x="18" y="24" width="8" height="6" />
-          <rect x="8" y="24" width="8" height="6" />
-          <rect x="28" y="28" width="6" height="4" />
-          <rect x="14" y="30" width="4" height="6" />
-          <rect x="22" y="30" width="4" height="6" />
-          <rect x="24" y="14" width="2" height="2" class="eye" />
-        </svg>
+        <!-- Game Smiths Club Logo -->
+        <img src="https://res.cloudinary.com/dqpvhbkdd/image/upload/v1760556228/Gamesmiths_logo_hx52by.png" alt="Game Smiths Club Logo" class="dino" width="192" height="192">
       </div>
     </div>
     <div class="hero-content">
@@ -47,12 +38,13 @@
         <span class="title-char" style="--i:0">G</span><span class="title-char" style="--i:1">a</span><span class="title-char" style="--i:2">m</span><span class="title-char" style="--i:3">e</span><span class="title-char" style="--i:4"> </span><span class="title-char" style="--i:5">S</span><span class="title-char" style="--i:6">m</span><span class="title-char" style="--i:7">i</span><span class="title-char" style="--i:8">t</span><span class="title-char" style="--i:9">h</span><span class="title-char" style="--i:10">s</span><span class="title-char" style="--i:11"> </span><span class="title-char" style="--i:12">C</span><span class="title-char" style="--i:13">l</span><span class="title-char" style="--i:14">u</span><span class="title-char" style="--i:15">b</span>
       </h1>
       <p class="subtitle">Forging the Future of Games, One Pixel at a Time</p>
+      <p class="college-first">🎮 First Ever Game Development Club in Our College 🎮</p>
       <div class="cta-row">
-        <button id="registerBtn" class="btn-register">
-          <span class="btn-text">Register Now</span>
+        <a href="#contact" class="btn-guild">
+          <span class="btn-text">Join The Guild</span>
           <span class="btn-glow"></span>
           <span class="btn-particles"></span>
-        </button>
+        </a>
         <div class="countdown-wrapper">
           <div class="countdown" id="countdown">
             <div class="time-unit">
@@ -73,103 +65,25 @@
             </div>
           </div>
         </div>
-        <a href="#contact" class="btn-primary">Join The Guild</a>
       </div>
       <p class="launch-note">Official Launch: October 17</p>
     </div>
   </section>
 
-  <!-- Registration Modal -->
-  <div id="registrationModal" class="modal">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-      <button class="modal-close" id="closeModal">&times;</button>
-      <h2 class="modal-title">🎮 Register for Game Smiths Club</h2>
-      <form id="registrationForm" class="registration-form">
-        <div class="form-row">
-          <label>
-            <span>Full Name</span>
-            <input type="text" name="name" placeholder="Enter your full name" required />
-          </label>
-          <label>
-            <span>Email</span>
-            <input type="email" name="email" placeholder="your.email@example.com" required />
-          </label>
-        </div>
-        <div class="form-row">
-          <label>
-            <span>Phone Number</span>
-            <input type="tel" name="phone" placeholder="1234567890" required pattern="[0-9]{10}" />
-          </label>
-          <label>
-            <span>Roll Number</span>
-            <input type="text" name="rollNumber" placeholder="21BCS001" required />
-          </label>
-        </div>
-        <div class="form-row">
-          <label>
-            <span>Branch</span>
-            <select name="branch" required>
-              <option value="">Select Branch</option>
-              <option value="CSE">Computer Science</option>
-              <option value="IT">Information Technology</option>
-              <option value="ECE">Electronics & Communication</option>
-              <option value="EEE">Electrical & Electronics</option>
-              <option value="MECH">Mechanical</option>
-              <option value="CIVIL">Civil</option>
-              <option value="OTHER">Other</option>
-            </select>
-          </label>
-          <label>
-            <span>Year</span>
-            <select name="year" required>
-              <option value="">Select Year</option>
-              <option value="1">1st Year</option>
-              <option value="2">2nd Year</option>
-              <option value="3">3rd Year</option>
-              <option value="4">4th Year</option>
-            </select>
-          </label>
-        </div>
-        <div class="form-row">
-          <label>
-            <span>Section</span>
-            <input type="text" name="section" placeholder="A" required maxlength="1" />
-          </label>
-          <label>
-            <span>Interest Area</span>
-            <select name="interest" required>
-              <option value="">Select Interest</option>
-              <option value="Game Development">Game Development</option>
-              <option value="Programming">Programming</option>
-              <option value="Art & Design">Art & Design</option>
-              <option value="Music & Sound">Music & Sound</option>
-              <option value="3D Modeling">3D Modeling</option>
-              <option value="Game Design">Game Design</option>
-            </select>
-          </label>
-        </div>
-        <button type="submit" class="btn-submit">
-          <span>Complete Registration</span>
-        </button>
-      </form>
-    </div>
-  </div>
-
   <!-- Stats -->
   <section class="section stats-section">
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-number" id="registeredCount" data-target="<%= registeredCount %>"><%= registeredCount %></div>
-        <div class="stat-label">Registered Members</div>
+        <div class="stat-number" id="memberCount" data-target="45">45</div>
+        <div class="stat-label">Members in Guild</div>
       </div>
       <div class="stat-card">
         <div class="stat-number" data-target="3">3</div>
         <div class="stat-label">Games Under Process</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number" data-target="42">42</div>
-        <div class="stat-label">Game Jams</div>
+        <div class="stat-number" data-target="280">280</div>
+        <div class="stat-label">Club Followers</div>
       </div>
       <div class="stat-card">
         <div class="stat-number" data-target="8">8</div>
@@ -231,8 +145,10 @@
       </article>
       <article class="card flip">
         <div class="card-face card-front">
-          <h3>The Last Exit</h3>
-          <p>Horror Inspired Maze Runner</p>
+          <div class="project-image-container">
+            <img src="https://res.cloudinary.com/dqpvhbkdd/image/upload/v1760551511/the_last_exit_logo_za3g6m.png" alt="The Last Exit" class="project-logo">
+          </div>
+          <p class="project-subtitle">Horror Inspired Maze Runner</p>
         </div>
         <div class="card-face card-back">
           <p>Navigate through dark corridors, solve puzzles, and escape the nightmare. Atmospheric horror experience.</p>
@@ -354,29 +270,59 @@
     <p class="section-lead">Ready to forge legendary games? Connect with us and become part of our creative community!</p>
     <div class="contact-grid">
       <form class="contact-form" onsubmit="return false;">
-        <label>
-          <span>🎮 Your Name</span>
-          <input type="text" placeholder="Enter your name" required />
-        </label>
-        <label>
-          <span>📧 Email Address</span>
-          <input type="email" placeholder="you@example.com" required />
-        </label>
-        <label>
-          <span>🎯 Your Interest</span>
-          <select style="background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--fg);padding:14px;outline:none;font-family:inherit;">
-            <option>Game Development</option>
-            <option>Art & Design</option>
-            <option>Music & Sound</option>
-            <option>Programming</option>
-            <option>Just Curious!</option>
-          </select>
-        </label>
-        <label>
-          <span>💬 Message</span>
-          <textarea rows="3" placeholder="Tell us what excites you about game development..."></textarea>
-        </label>
-        <button class="btn-primary" type="submit">🚀 Join The Adventure</button>
+        <div class="form-scroll-container">
+          <label>
+            <span>Your Name</span>
+            <input type="text" name="name" placeholder="Enter your name" required />
+          </label>
+          <label>
+            <span>Email Address</span>
+            <input type="email" name="email" placeholder="you@example.com" required />
+          </label>
+          <label>
+            <span>Phone Number</span>
+            <input type="tel" name="phone" placeholder="1234567890" required pattern="[0-9]{10}" />
+          </label>
+          <label>
+            <span>Branch</span>
+            <div class="custom-select" data-name="branch" data-required="true">
+              <div class="select-selected">Select Branch</div>
+              <div class="select-items select-hide">
+                <div data-value="CSE">Computer Science</div>
+                <div data-value="IT">Information Technology</div>
+                <div data-value="ECE">Electronics & Communication</div>
+                <div data-value="EEE">Electrical & Electronics</div>
+                <div data-value="MECH">Mechanical</div>
+                <div data-value="CIVIL">Civil</div>
+                <div data-value="OTHER">Other</div>
+              </div>
+            </div>
+          </label>
+          <label>
+            <span>Section</span>
+            <input type="text" name="section" placeholder="A" required maxlength="1" style="text-transform: uppercase;" />
+          </label>
+          <label>
+            <span>Your Interest</span>
+            <div class="custom-select" data-name="interest" data-required="true">
+              <div class="select-selected">Select Interest</div>
+              <div class="select-items select-hide">
+                <div data-value="Game Development">Game Development</div>
+                <div data-value="Art & Design">Art & Design</div>
+                <div data-value="Music & Sound">Music & Sound</div>
+                <div data-value="Programming">Programming</div>
+                <div data-value="Just Curious!">Just Curious!</div>
+              </div>
+            </div>
+          </label>
+            </select>
+          </label>
+          <label>
+            <span>Message</span>
+            <textarea name="message" rows="3" placeholder="Tell us what excites you about game development..."></textarea>
+          </label>
+        </div>
+        <button class="btn-primary" type="submit">Join The Adventure</button>
       </form>
       <div class="social-container">
         <h3 class="social-title">Connect With Us</h3>
@@ -419,7 +365,7 @@
       <div class="game-container">
         <canvas id="pongGame" width="400" height="300"></canvas>
         <div class="game-controls">
-          <p>Mouse to control</p>
+          <p>Use ↑↓ Arrow Keys or W/S to move paddle</p>
           <button id="pongStart" class="btn-primary">Start</button>
           <div class="game-score">Score: <span id="pongScore">0</span></div>
         </div>
