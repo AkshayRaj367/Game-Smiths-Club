@@ -608,6 +608,28 @@ body:before{
     font-size:12px!important;
     padding:12px 30px!important;
     animation:none!important;
+    cursor:pointer!important;
+    -webkit-tap-highlight-color:transparent!important;
+    pointer-events:auto!important;
+  }
+  
+  /* Enable btn-guild animations and effects on mobile */
+  .btn-guild .btn-glow{
+    display:block!important;
+    animation:btn-rotate 4s linear infinite!important;
+  }
+  
+  .btn-guild .btn-particles{
+    display:block!important;
+    animation:particles-move 3s linear infinite!important;
+  }
+  
+  .btn-guild .btn-text{
+    animation:text-glitch 4s infinite!important;
+  }
+  
+  .btn-guild:active{
+    transform:scale(0.95)!important;
   }
   
   .cta-row{
@@ -632,7 +654,27 @@ body:before{
   
   /* Disable card hover effects */
   .card.pop:hover{transform:translateY(-5px)!important;box-shadow:0 10px 20px rgba(0,0,0,.3)!important}
+  
+  /* Enable stat card interactions on mobile */
+  .stat-card{
+    cursor:pointer!important;
+    -webkit-tap-highlight-color:transparent!important;
+    transition:transform .3s ease,box-shadow .3s ease!important;
+  }
   .stat-card:hover{transform:translateY(-4px) scale(1.02)!important;box-shadow:0 0 15px rgba(0,255,153,.2)!important}
+  .stat-card:active{
+    transform:translateY(-6px) scale(1.05)!important;
+    box-shadow:0 0 25px rgba(0,255,255,.4),0 0 35px rgba(255,0,255,.3)!important;
+  }
+  
+  /* Make stat numbers more responsive on mobile */
+  .stat-number{
+    font-size:clamp(28px,8vw,48px)!important;
+    transition:transform .3s ease!important;
+  }
+  .stat-card:active .stat-number{
+    transform:scale(1.1)!important;
+  }
   
   /* Fresh Modal Design for Mobile */
   .modal-content{
