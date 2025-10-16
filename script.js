@@ -17,12 +17,31 @@
  */
 (function(){
   /**
-   * Detects if the current device is mobile or touch-enabled
-   * Checks multiple conditions for comprehensive mobile detection
+   * Detects if the current device is mobile based on screen width and user agent
+   * Desktop: width > 768px (tablets and larger screens)
+   * Mobile: width <= 768px (phones and small tablets)
    * @constant {boolean}
    */
-  const isMobile = (window.innerWidth <= 768) || // Screen width check first
-                   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const MOBILE_BREAKPOINT = 768;
+  
+  function checkIfMobile() {
+    const screenWidth = window.innerWidth;
+    const isTouchDevice = ('ontouchstart' in window) || 
+                         (navigator.maxTouchPoints > 0) || 
+                         (navigator.msMaxTouchPoints > 0);
+    const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Prioritize screen width for desktop detection
+    // Even if device has touch, if screen is > 768px, treat as desktop
+    if (screenWidth > MOBILE_BREAKPOINT) {
+      return false; // Desktop mode
+    }
+    
+    // If screen <= 768px, check if it's actually a mobile device
+    return isTouchDevice || isMobileUA;
+  }
+  
+  let isMobile = checkIfMobile();
   
   // If mobile, enable default cursor immediately and hide custom cursor
   if(isMobile) {
@@ -392,12 +411,30 @@
     }
   };
   
+  // Hide cursor when mouse leaves the window
+  const hideCursor = () => {
+    if(customCursor) {
+      customCursor.style.visibility = 'hidden';
+    }
+  };
+  
+  // Show cursor when mouse enters the window
+  const showCursor = (e) => {
+    if(customCursor) {
+      customCursor.style.visibility = 'visible';
+      updateCursorPosition(e);
+    }
+  };
+  
   // Use multiple event listeners for better browser compatibility
   document.addEventListener('mousemove', updateCursorPosition);
-  document.addEventListener('mouseenter', updateCursorPosition);
+  document.addEventListener('mouseenter', showCursor);
+  document.addEventListener('mouseleave', hideCursor);
   
   // Also track on window for better coverage
   window.addEventListener('mousemove', updateCursorPosition);
+  window.addEventListener('mouseenter', showCursor);
+  window.addEventListener('mouseleave', hideCursor);
   
   // Fallback: Show default cursor if custom cursor fails to initialize or move
   let cursorMoveDetected = false;
