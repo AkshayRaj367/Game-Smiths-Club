@@ -21,9 +21,7 @@
    * Checks multiple conditions for comprehensive mobile detection
    * @constant {boolean}
    */
-  const isMobile = ('ontouchstart' in window) || 
-                   (navigator.maxTouchPoints > 0) || 
-                   (navigator.msMaxTouchPoints > 0) ||
+  const isMobile = (window.innerWidth <= 768) || // Screen width check first
                    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   
   // If mobile, enable default cursor immediately and hide custom cursor
