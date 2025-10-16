@@ -344,8 +344,9 @@
   });
 
   // Custom Cursor (disabled on mobile)
-  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  let mouseX = -1000, mouseY = -1000; // Start off-screen to prevent visible glitch
   let customCursorInitialized = false;
+  let firstMouseMove = false;
   
   if(!isMobile){
   const customCursor = document.querySelector('.custom-cursor');
@@ -357,42 +358,47 @@
     if(!cursorOverlay) {
       cursorOverlay = document.createElement('div');
       cursorOverlay.id = 'cursor-overlay';
-      cursorOverlay.style.cssText = 'position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;pointer-events:none!important;z-index:2147483647!important;overflow:visible!important;isolation:isolate!important;';
+      cursorOverlay.style.cssText = 'position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;pointer-events:none!important;z-index:2147483646!important;overflow:visible!important;isolation:isolate!important;';
       document.body.appendChild(cursorOverlay);
     }
     
     // Move cursor into the overlay
     cursorOverlay.appendChild(customCursor);
     
-    // Set cursor styles
-    customCursor.style.cssText = 'position:fixed!important;width:32px!important;height:32px!important;pointer-events:none!important;z-index:2147483647!important;opacity:1!important;visibility:visible!important;display:block!important;left:0!important;top:0!important;';
+    // Set cursor styles - initially hidden until first mouse move
+    customCursor.style.cssText = 'position:fixed!important;width:32px!important;height:32px!important;pointer-events:none!important;z-index:2147483647!important;opacity:0!important;visibility:hidden!important;display:block!important;left:0!important;top:0!important;transition:opacity 0.2s ease!important;';
     
-    // Initialize cursor at center immediately
-    customCursor.style.transform = `translate3d(${mouseX - 16}px, ${mouseY - 16}px, 0) rotate(-135deg)`;
+    // Initialize cursor off-screen
+    customCursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) rotate(-135deg)`;
     customCursorInitialized = true;
     
-    // Continuously ensure cursor and overlay stay on top
+    // Continuously ensure cursor overlay stays on top but below max z-index
     setInterval(() => {
       if(cursorOverlay) {
-        cursorOverlay.style.zIndex = '2147483647';
+        cursorOverlay.style.zIndex = '2147483646';
         cursorOverlay.style.pointerEvents = 'none';
         if(cursorOverlay.parentElement !== document.body) {
           document.body.appendChild(cursorOverlay);
         }
       }
-      if(customCursor) {
+      if(customCursor && firstMouseMove) {
         customCursor.style.zIndex = '2147483647';
-        customCursor.style.opacity = '1';
-        customCursor.style.visibility = 'visible';
         customCursor.style.display = 'block';
       }
-    }, 50);
+    }, 100);
   }
   
   // Update cursor position on mouse move
   const updateCursorPosition = (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
+    
+    // Show cursor on first mouse movement
+    if(!firstMouseMove && customCursor) {
+      firstMouseMove = true;
+      customCursor.classList.add('active');
+    }
+    
     if(customCursor) {
       // Use transform for better performance and prevent glitching
       customCursor.style.transform = `translate3d(${mouseX - 16}px, ${mouseY - 16}px, 0) rotate(-135deg)`;
