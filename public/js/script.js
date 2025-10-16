@@ -344,9 +344,8 @@
   });
 
   // Custom Cursor (disabled on mobile)
-  let mouseX = -1000, mouseY = -1000; // Start off-screen to prevent visible glitch
+  let mouseX = -1000, mouseY = -1000; // Start off-screen
   let customCursorInitialized = false;
-  let firstMouseMove = false;
   
   if(!isMobile){
   const customCursor = document.querySelector('.custom-cursor');
@@ -365,9 +364,6 @@
     // Move cursor into the overlay
     cursorOverlay.appendChild(customCursor);
     
-    // Set cursor styles - initially hidden until first mouse move
-    customCursor.style.cssText = 'position:fixed!important;width:32px!important;height:32px!important;pointer-events:none!important;z-index:2147483647!important;opacity:0!important;visibility:hidden!important;display:block!important;left:0!important;top:0!important;transition:opacity 0.2s ease!important;';
-    
     // Initialize cursor off-screen
     customCursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) rotate(-135deg)`;
     customCursorInitialized = true;
@@ -381,8 +377,7 @@
           document.body.appendChild(cursorOverlay);
         }
       }
-      if(customCursor && firstMouseMove) {
-        customCursor.style.zIndex = '2147483647';
+      if(customCursor) {
         customCursor.style.display = 'block';
       }
     }, 100);
@@ -392,12 +387,6 @@
   const updateCursorPosition = (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-    
-    // Show cursor on first mouse movement
-    if(!firstMouseMove && customCursor) {
-      firstMouseMove = true;
-      customCursor.classList.add('active');
-    }
     
     if(customCursor) {
       // Use transform for better performance and prevent glitching
