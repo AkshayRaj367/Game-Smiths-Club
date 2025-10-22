@@ -88,19 +88,16 @@
   });
 
   /**
-   * Countdown Timer to October 17
+   * Countdown Timer - COMMENTED OUT (Club is now live!)
    * Displays days, hours, minutes, and seconds remaining
    */
+  /*
   const cdEl = document.querySelector('.countdown');
   const dEl = cdEl?.querySelector('.days');
   const hEl = cdEl?.querySelector('.hours');
   const mEl = cdEl?.querySelector('.minutes');
   const sEl = cdEl?.querySelector('.seconds');
 
-  /**
-   * Calculates the next October 17 date
-   * @returns {Date} Next occurrence of October 17
-   */
   function nextOct17(){
     const now = new Date();
     const year = now.getMonth()>9 || (now.getMonth()===9 && now.getDate()>17) ? now.getFullYear()+1 : now.getFullYear();
@@ -110,10 +107,6 @@
 
   const target = nextOct17();
   
-  /**
-   * Updates countdown display every second
-   * Shows "The Club is Live" message when countdown reaches zero
-   */
   function tick(){
     const now = new Date();
     let diff = target - now;
@@ -136,6 +129,7 @@
     if(sEl) sEl.textContent=String(s).padStart(2,'0');
   }
   setInterval(tick,1000); tick();
+  */
 
   /**
    * Title Pixel Explosion Effect

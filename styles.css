@@ -133,6 +133,8 @@ body:before{
 @keyframes pop-in{0%{transform:scale(0) rotate(-180deg);opacity:0}60%{transform:scale(1.2) rotate(10deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
 @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:0.9}}
 .launch-note{opacity:.8;margin-top:10px}
+.launch-message{width:100%;display:flex;justify-content:center;align-items:center;margin:30px 0 40px;text-align:center}
+.launch-message p{font-family:"Press Start 2P",monospace}
 
 /* Stats Section */
 .stats-section{background:linear-gradient(135deg,rgba(0,255,255,.05),rgba(255,0,255,.05));border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)}
