@@ -207,6 +207,14 @@ app.post('/api/join', async (req, res) => {
       });
     }
 
+    // Validate email format
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Please provide a valid email address' 
+      });
+    }
+
     // Validate phone number format (10 digits)
     if (!/^[0-9]{10}$/.test(phone)) {
       return res.status(400).json({ 
@@ -224,17 +232,23 @@ app.post('/api/join', async (req, res) => {
       });
     }
 
-    // Create and save new member
-    const newMember = new Member({
-      name,
-      email,
-      phone,
-      branch,
-      section: section.toUpperCase(),
-      interest,
-      message
-    });
+    // Create member data object, only include message if it exists and has content
+    const memberData = {
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone.trim(),
+      branch: branch.trim(),
+      section: section.toUpperCase().trim(),
+      interest: interest.trim()
+    };
 
+    // Only add message if it's provided and not empty
+    if (message && message.trim()) {
+      memberData.message = message.trim();
+    }
+
+    // Create and save new member
+    const newMember = new Member(memberData);
     await newMember.save();
 
     res.status(201).json({ 
@@ -245,6 +259,25 @@ app.post('/api/join', async (req, res) => {
 
   } catch (error) {
     console.error('Error saving member:', error);
+    
+    // Handle mongoose validation errors specifically
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({ 
+        success: false, 
+        message: messages.join(', ')
+      });
+    }
+
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'This email is already registered!' 
+      });
+    }
+
+    // Generic error response
     res.status(500).json({ 
       success: false, 
       message: 'Server error. Please try again later.' 
@@ -300,10 +333,8 @@ app.get('/api/members/count', async (req, res) => {
     res.json({ success: true, count });
   } catch (error) {
     console.error('Error counting members:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error counting members' 
-    });
+    // Return 0 instead of error for better UX
+    res.json({ success: true, count: 0 });
   }
 });
 
