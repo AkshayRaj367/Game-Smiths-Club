@@ -196,55 +196,79 @@ const Registration = mongoose.model('Registration', registrationSchema);
  * }
  */
 app.post('/api/join', async (req, res) => {
+  // ============================================================
+  // REGISTRATION CLOSED - Comment out this block to re-enable
+  // ============================================================
+  return res.status(403).json({
+    success: false,
+    message: 'Registration period has ended. Stay tuned for the next semester!'
+  });
+  // ============================================================
+  
+  /* UNCOMMENT TO RE-ENABLE REGISTRATIONS
   try {
-    const { name, email, phone, branch, section, interest, message } = req.body;
+    let { name, email, phone, branch, section, interest, message } = req.body;
+
+    // Sanitize and trim all inputs
+    name = name ? String(name).trim() : '';
+    email = email ? String(email).trim().toLowerCase() : '';
+    phone = phone ? String(phone).trim().replace(/\D/g, '') : ''; // Remove non-digits
+    branch = branch ? String(branch).trim() : '';
+    section = section ? String(section).trim().toUpperCase() : '';
+    interest = interest ? String(interest).trim() : '';
+    message = message ? String(message).trim() : '';
 
     // Validate required fields
     if (!name || !email || !phone || !branch || !section || !interest) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Name, email, phone, branch, section, and interest are required' 
+        message: 'All fields except message are required' 
       });
     }
 
-    // Validate email format
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
+    // Validate email format (more lenient)
+    if (!email.includes('@') || !email.includes('.')) {
       return res.status(400).json({ 
         success: false, 
         message: 'Please provide a valid email address' 
       });
     }
 
-    // Validate phone number format (10 digits)
-    if (!/^[0-9]{10}$/.test(phone)) {
+    // Validate phone number format (accept 10+ digits, extract first 10)
+    if (phone.length < 10) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Please enter a valid 10-digit phone number' 
+        message: 'Please enter a valid phone number (at least 10 digits)' 
       });
     }
+    // Use first 10 digits
+    phone = phone.substring(0, 10);
 
-    // Check for duplicate email
-    const existingMember = await Member.findOne({ email });
+    // Check for duplicate email (case-insensitive)
+    const existingMember = await Member.findOne({ 
+      email: { $regex: new RegExp(`^${email}$`, 'i') }
+    });
+    
     if (existingMember) {
-      return res.status(400).json({ 
+      return res.status(409).json({ // 409 Conflict instead of 400
         success: false, 
         message: 'This email is already registered!' 
       });
     }
 
-    // Create member data object, only include message if it exists and has content
+    // Create member data object
     const memberData = {
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      phone: phone.trim(),
-      branch: branch.trim(),
-      section: section.toUpperCase().trim(),
-      interest: interest.trim()
+      name,
+      email,
+      phone,
+      branch,
+      section,
+      interest
     };
 
-    // Only add message if it's provided and not empty
-    if (message && message.trim()) {
-      memberData.message = message.trim();
+    // Only add message if it exists and has content
+    if (message) {
+      memberData.message = message.substring(0, 500); // Limit to 500 chars
     }
 
     // Create and save new member
@@ -254,7 +278,12 @@ app.post('/api/join', async (req, res) => {
     res.status(201).json({ 
       success: true, 
       message: 'Welcome to Game Smiths Club!',
-      data: newMember
+      data: {
+        name: newMember.name,
+        email: newMember.email,
+        branch: newMember.branch,
+        interest: newMember.interest
+      }
     });
 
   } catch (error) {
@@ -271,18 +300,20 @@ app.post('/api/join', async (req, res) => {
 
     // Handle duplicate key errors
     if (error.code === 11000) {
-      return res.status(400).json({ 
+      return res.status(409).json({ 
         success: false, 
         message: 'This email is already registered!' 
       });
     }
 
-    // Generic error response
+    // Generic error response (500 only for real server errors)
     res.status(500).json({ 
       success: false, 
       message: 'Server error. Please try again later.' 
     });
   }
+  */
+  // END COMMENTED REGISTRATION CODE
 });
 
 /**
@@ -473,6 +504,33 @@ app.get('/api/registrations/count', async (req, res) => {
  */
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// ============================================================================
+// ERROR HANDLING MIDDLEWARE
+// ============================================================================
+
+/**
+ * 404 Handler - Catch all unmatched routes
+ */
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
+  });
+});
+
+/**
+ * Global Error Handler - Catch any unhandled errors
+ */
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal server error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
 });
 
 // ============================================================================
